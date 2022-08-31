@@ -27,7 +27,7 @@ MapReduce编程模型的原理是：利用一个输入**key/value pair集合**�
 
 ### 示例
 
-```
+```java
 计算一个大的文档集合中每个单词出现的次数
 // 定义map函数
 map(String key, String value):
@@ -109,3 +109,121 @@ master存储的关于Map任务产生的中间文件的存储区域的大小和�
 
 在处理一组数据的过程中，如果一个机器速度非常的慢而导致整体的时间超过预期，那么在MapReduce操作即将完成的时候，master调用备用（backup）任务进度来执行剩下的处于处理中的任务
 
+## 单词计数示例
+
+```java
+import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCount {
+    /* 输入数据的类型  数据再mr内部传递的时候需要序列化
+     * LongWritable  序列化 （MR框架维护）
+     * Text  输入的数据（读到文件中一行）等价于 StringWritable
+     *
+     * 输出数据的类型   根据业务来确定  Word value（98）
+     * Text
+     * IntWritable
+     */
+    public static class MapTask extends Mapper<LongWritable,Text,Text,IntWritable>{
+        //重写父类的map方法
+        //每读一行数据，map函数就被执行一次
+        @Override
+        protected void map(LongWritable key, Text value, Context context)
+                throws IOException, InterruptedException {
+            // TODO Auto-generated method stub
+            // key --  value   word -- 1
+            //value    hadoop,hadoop,spark,spark
+            //结果是：<hadoop,1> <hadoop,1>  <spark,1>  <spark,1>
+            String[] words = value.toString().split(",");
+            //遍历words，写出去
+            for(String word:words)
+            {
+                context.write(new Text(word), new IntWritable(1));//<hadoop,1>
+            }
+        }
+    }
+
+    //Reduce端  <hadoop,96>
+    /* 输入数据的类型  跟MapTask的输出类型一致
+     * Text  输入的数据（读到文件中一行）等价于 StringWritable
+     * IntWritable
+     *
+     * 输出数据的类型   根据业务来确定  Word value（98）
+     * Text
+     * IntWritable
+     */
+    public static class ReduceTask extends Reducer<Text,IntWritable, Text,IntWritable>{
+        /*
+         * 重写父类的reduce方法
+         * 每替换一个key的时候，reduce方法被调用一次
+         */
+        @Override
+        protected void reduce(Text key, Iterable<IntWritable> values,
+                              Context context) throws IOException, InterruptedException {
+            // TODO Auto-generated method stub
+            //super.reduce(key, values, context);
+            //key hadoop
+            //values  (1,1,1,1,...)
+            int count = 0;
+            for(IntWritable value:values) {
+                count++;
+            }
+            //写出去
+            context.write(key, new IntWritable(count));
+
+        }
+    }
+    //运行测试，本地环境测试
+    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+        // TODO Auto-generated method stub
+        //告诉系统运行的时候，使用root权限
+        System.setProperty("HADOOP_USER_NAME", "root");
+        Configuration conf = new Configuration();
+        conf.set("fs.defaultFS", "hdfs://master:9000");
+        //1.MR由Job对象去提交任务
+        Job job = Job.getInstance(conf);
+        //2.告知job提交的信息
+        job.setMapperClass(MapTask.class);
+        job.setReducerClass(ReduceTask.class);
+        job.setJarByClass(WordCount.class);
+        //3.告知MR，输出类型 （只需要设置输出类型）
+        //map的输出
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(IntWritable.class);
+        //reduce的输出
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+
+        //4.输入输出文件的路径设置
+        String output = "/bigdata/output/";
+        //加一个判断
+        FileSystem fileSystem = FileSystem.get(conf);
+        if(fileSystem.exists(new Path(output))) {
+            fileSystem.delete(new Path(output),true);
+        }
+
+        FileInputFormat.addInputPath(job, new Path("/bigdata/input/wc.txt"));
+        FileOutputFormat.setOutputPath(job, new Path(output));
+
+        //为了测试
+        boolean b = job.waitForCompletion(true);
+        System.out.println(b ? "没问题！！" : "失败");
+    }
+}
+```
+
+可以打包为 jar 在master上运行
+
+```sh
+hadoop jar FILE_NAME.jar CLASS_NAME
+```
