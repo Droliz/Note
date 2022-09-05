@@ -31,7 +31,6 @@
     >浏览器本身是不会执行JS代码，而是通过内置的JavaScript引擎来执行JS代码，JS引擎执行代码时逐行解释每一句代码（转换为机器语言），然后交由计算机执行，所有JavaScript语言归为脚本语言，会逐行解析代码
 
 * **JS组成**
-    * ECMAScript（JS语法）
         * ECMAScript是由ECMA国际进行的标准化的一门编程语言，JavaScript和JScript是ECMAScript的实现和扩展
         * ***ECMAScript规定了JS的编程语法和核心知识***
     * DOM（页面文档对象模型）
@@ -297,19 +296,93 @@
         >执行代码构造函数代码然后给这个空对象添加属性、方法\
         >最后返回这个对象
 
-        >在不确定有多少实参传入时，arguments存储了所有的实参，值按传入顺序 (数组)
+>在不确定有多少实参传入时，arguments存储了所有的实参，值按传入顺序 (数组)
 
 
-> ***变量、属性、函数、方法的区别***\
->变量和属性都是用来存储数据的，变量单独声明，使用时直接写变量名.属性在对象中，不需要声明，使用时必须是对象名.属性名\
+```js
+// 构造函数  
+function Person() {  
+  
+}  
+  
+// 实例  
+let person1 = new Person()  
+person1.name = "jack"  
+console.log(person1.name)   // jack
+```
+
+原型对象就相当于一个公共的区域，所有同一个类的实例都可以访问到这个原型对象，我们可以将对象中共有的内容，统一设置到原型对象中在JavaScript中。每定义一个函数数据类型会自带一个 `prototype` 属性（显示原型属性，只有函数有），这个属性是一个指针指向==函数的原型对象== `Person.prototype`
+
+**构造函数与原型之间的关系**
+
+![](../markdown_img/Pasted%20image%2020220903182122.png)
+
+
+```js
+Person.prototype.name = "jack"  
+let person1 = new Person()  
+let person2 = new Person()  
+console.log(person1.name)   // jack  
+console.log(person2.name)   // jack
+```
+
+在实例对象上，有一个`__proto__` 属性（隐式原型属性）是指向原型对象
+
+```js
+let person1 = new Person()  
+console.log(person1.__proto__ === Person.prototype)   // true
+```
+
+
+![](../markdown_img/Pasted%20image%2020220903183307.png)
+
+
+原型对象上有一个 `constructor` 属性，这个属性就是将原型对象指向关联的构造函数
+
+```js
+console.log(Person.prototype.constructor === Person)  // true
+
+console.log(person1.constructor === Person)   // true
+```
+
+上述中，实例对象上并没有`constructor` 属性，但是会通过原型链在原型（`Person.prototype`）上找到
+
+当实例和原型有一个相同的属性时，输出实例的属性会显示实例上属性，自动忽略原型属性。访问实例属性会先在实例上查找该属性，如果没有就在原型上查找，如果没有找到原型的原型，直到最后没找到就为 `null`
+
+实例`hasOwnProperty` 方法是无法检测是否具有原型上定义的属性，直接使用 `in` 操作符是可以检测所有的
+
+```js
+Person.prototype.name = '1'  
+let person1 = new Person()  
+person1.age = 1  
+console.log(person1.hasOwnProperty('name'))  // false  
+console.log(person1.hasOwnProperty('age'))  // true  
+console.log("name" in person1)  // true  
+console.log("age" in person1)  // true
+```
+
+需要知道的是，通过对象的`keys` 方法获取可枚举的属性名，其中并没有 `name`，也就是说实例身上是可以访问`name`，但是该属性是不可枚举的
+
+```js
+let keys = Object.keys(person1)  
+console.log(keys)   // [ 'age' ]
+```
+
+![](../markdown_img/Pasted%20image%2020220903185219.png)
+
+
+
+> ***变量、属性、函数、方法的区别***
+>变量和属性都是用来存储数据的，变量单独声明，使用时直接写变量名.属性在对象中，不需要声明，使用时必须是对象名.属性名
 >函数和方法都是实现某种功能，函数单独定义，调用时 函数名(参数);.方法在对象中，调用的时候 对象名.方法名(参数)
 
 * **作用域**
     * 可访问的变量、函数、对象的集合
     * 变量在函数内声明，变量为局部作用域只能在函数内部访问，因为是局部变量，所有不同的函数可以有相同的变量名，局部变量在函数执行结束后就会被销毁
     * 变量在函数外声明或在函数内没有声明（没有var关键字），变量为全局作用域，全局变量只能有一个相同名字，在网页关闭的时候销毁
----
----
+
+
+
 
 ## BOM和DOM
 
@@ -1243,6 +1316,12 @@ DOM在实际开发中主要用于操作元素
 
 ## 其他
 
+### 原型、原型链
+
+
+
+![](../markdown_img/Pasted%20image%2020220903173626.png)
+
 ### sql注入
 
 #### 防止输入框sql注入
@@ -1427,4 +1506,71 @@ inputs.each(function(index, item){
 ```
 
 
+
+
+
+### Object 的方法
+
+#### defineProperty
+
+接收三个参数
+* 属性所在对象
+* 属性名字
+* 描述符对象
+	* configurable：表示能否通过delete删除属性从而重新定义属性，能否修改属性的特性，或者能否把属性修改为访问器属性，默认值为false
+	* enumerable：表示能否通过for in循环访问属性，默认值为false
+	* writable：表示能否修改属性的值。默认值为false
+	* value：包含这个属性的数据值。默认值为undefined
+	* setter与getter
+
+### 数组的方法
+
+#### reduce
+
+reduce() 方法接收一个函数作为累加器，数组中的每个值（从左到右）开始缩减，最终计算为一个值
+
+**注意:** reduce() 对于空数组是不会执行回调函数的
+
+例如：计算数组中偶数个数
+
+```js
+let arr = [1, 2, 3, 4, 5, 6]
+  
+// pre为上一个回调函数的返回值，current为每个元素
+const n = arr.reduce((pre, current) => {
+    console.log(pre, current);
+    return pre + (current % 2 ? 1 : 0)
+}, 0)   // pre 初始值
+  
+console.log(n);
+```
+
+
+### 浏览器本地存储
+
+将一些数据以键值对形式存储在浏览器上
+
+#### localStorage
+
+localStorage 存放数据，即便浏览器关闭，数据也不会消失
+
+```js
+// 保存一个数据
+localStorage.setItem(key, value)
+
+// 获取一个数据
+localStorage.getItem(key)
+
+// 删除
+localStorage.removeItem(key)
+
+// 清空
+localStorage.clear()
+```
+
+值得注意的是在保存时，会自动调用 `toString()` 方法，所以如果保存的是对下个类型的数据，可以使用 `JSON.stringify(value)` 解决，读取数据是JSON字符串需要 `JSON.parse()` 方法解析
+
+### sessionStorage
+
+`localStorage` 中的方法在 session 中也有，但相较于上者，这个关闭浏览器就会消失
 

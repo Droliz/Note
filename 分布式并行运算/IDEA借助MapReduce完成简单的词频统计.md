@@ -3,6 +3,7 @@ title: IDEA借助MapReduce完成简单的词频统计
 zhihu-tags: Hadoop, java, MapReduce, 分布式
 zhihu-url: https://zhuanlan.zhihu.com/p/559962938
 ---
+
 # IDEA借助MapReduce完成简单的词频统计
 
 ## 准备

@@ -122,7 +122,6 @@ module.exports = {
 }
 ```
 
----
 
 #### webpack插件
 
@@ -481,11 +480,136 @@ vue是一套**用于构建用户界面的**前端**框架**
 	ViewModel  是 vue 的实例，其是 MVVM 的核心（vue实例对象）
 		![](../../markdown_img/Pasted%20image%2020220616012336.png)
 
+#### vue的监测数据原理
+
+案例
+```html 
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <button @click="update">更新数据</button>  
+    <ul>  
+        <li v-for="item in list"  
+            :key="item.id">  
+            {{item.name}} - {{item.age}}  
+        </li>  
+    </ul>  
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    const vm = new Vue({  
+        el: "#app",  
+        data: {  
+            list: [  
+                {id: "001", name: "马冬梅", age: "18"},  
+            ],  
+        },  
+        methods: {  
+            update() {  
+                this.list[0] = {id: "001", name: "周杰伦", age: 18}  
+            }  
+        }  
+    });  
+</script>  
+</body>  
+</html>
+```
+
+![](../../markdown_img/Pasted%20image%2020220901185933.png)
+
+此时数据以及已经更改，但是 vue 并没有检测到数据发生了更改
+
+**监测对象改变的原理**
+
+每次发现数据改变，就调用 `setter` 模板顺带重新解析，然后生成虚拟 DOM 对比新旧虚拟 DOM渲染页面
+
+核心原理
+
+```js
+// vue 实例对象
+const vm = {};  
+
+// 数据
+let data = {  
+    name: "jack",  
+    age: 18  
+}  
+
+// 监视对象，监视data属性变化  (加工)
+const obs = new Observer(data);  
+  
+function Observer(obj) {  
+    // 汇总所有属性  
+    const keys = Object.keys(obj);  
+    // 遍历  
+    keys.forEach((k) => {  
+        Object.defineProperty(this, k, {  
+            get() {  
+                return obj[k]  
+            },  
+            set(val) {  
+                obj[k] = val;  
+            }  
+        })  
+    })  
+}  
+  
+// 将监视对象赋值给 vm._data
+vm._data = obs;
+```
+
+![](../../markdown_img/Pasted%20image%2020220901193133.png)
+
+使用 `Vue.set()` 添加响应式的数据（`_data`）
+
+```js
+Vue.set(target, key, value)
+
+// 例如
+Vue.set(vm.person, "sex", "男") 
+
+// 在vue实例对象使用$set方法  效果相同
+vm.$set(vm.person, "set", "男")
+```
+
+只能给data中的对象添加属性（对象不能是vue实例），不能给data根添加属性
+
+**检测数组的原理**
+
+当数据是一个数组时，数组中的每一个元素不是响应式的（没有为每一个元素服务的 `getter、setter`），直接通过索引更改是无法实现的
+
+![](../../markdown_img/Pasted%20image%2020220901213927.png)
+
+vue中实现监听数组的元素是通过==数组对象的可以修改数组中元素的方法==，才会被vue认为是修改了数组
+
+-   `push()`
+-   `pop()`
+-   `shift()`
+-   `unshift()`
+-   `splice()`
+-   `sort()`
+-   `reverse()`
+
+vue对这些方法进行了包装，这时调用的方法，不是array对象原型上的方法（会先调用原型对象（参考 [js](../JS.md) 构造函数）上的方法，然后重新解析模板），除了这些以外的过滤等返回新数组的方法，可以直接通过赋值数组的形式达到同样的效果
+
+
 #### 数据代理
+
+将`data`中的所有数据加工（变为响应式，附带模板重新解析），然后给`vm实例`的`_data`
+
+`_data`中获取数据和设置数据都需要调用 `getter、setter`（数据劫持）
 
 通过一个对象代理对另一个对象中的属性进行读 / 写操作
 
-
+![](../../markdown_img/Pasted%20image%2020220901190459.png)
 
 #### vue 的指令
 
@@ -601,7 +725,7 @@ vue是一套**用于构建用户界面的**前端**框架**
 		            methods: {
 		                // 处理函数
 						add(value, e) {   // e表示事件参数  是原生的 DOM event
-		                    // this指向当前的vm实例对象，可以获取到当前的vue实例
+		                    // this指向当前的 vm 实例对象，可以获取到当前的vue实例
 		                    this.count += value;
 		                    event.target.style.backgroundColor = 'red';
 		                }
@@ -672,12 +796,13 @@ vue是一套**用于构建用户界面的**前端**框架**
 		    </script>
 		</body>
 		~~~
-		注意：只能联合表单使用（默认获取value数据`v-model === v-model:value`）
+	注意：只能联合表单使用（默认获取value数据`v-model === v-model:value`）
 	* 修饰符
 		* .number：将用户输入值转为数值
 		* .trim：过滤首位空白字符
 		* .lazy：非实时更新，失去焦点时更新
-		
+
+
 * 条件渲染指令
 	* v-if、v-show
 		都可以辅助控制元素的显示与隐藏（`"布尔值"`)
@@ -794,16 +919,293 @@ vue是一套**用于构建用户界面的**前端**框架**
 虚拟DOM对比算法（通过key比较，相同的复用，不同的新生成）
 ![](../../markdown_img/Pasted%20image%2020220829100729.png)
 
+* v-cloak
+	* v-cloak没有值，可以再当网速过慢时，对于那些需要vue解析的模板，可以加上v-cloak，借助css `[v-cloak: {display: none;}]` 方式隐藏未解析模板，等vue加载完成会删除模板上的 `v-cloak` 
+
+* v-once
+	* v-once没有值，使模板只会再初次动态渲染后就视为静态的，后续变化不会再次渲染此标签（用于看到初始值）
+
+* v-pre
+	* v-pre没有值，可以跳过该节点的编译（可以对没有插值语法节点使用，加快编译）
+
+
 #### 过滤器
 
 在 3.x 中，过滤器已移除，且不再支持。取而代之的是，建议用方法调用或计算属性来替换它们。
+
+过滤器：对要显示的数据进行特定的格式化后再显示，不更改原数据只是生成新数据
+
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <p>{{dataName | filterName}}</p>   <!-- 数据 | 过滤器 -->
+    <!-- 可以接收参数，但默认第一个就是dataName -->
+    <!-- 过滤器可以多个一起使用 {{data | filter1 | filter2 ...}} 
+	    前一个的返回当后一个的输入
+    -->
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    new Vue({  
+        el: "#app",  
+        data: {  
+            dataName: 1,  
+        },  
+        filters: {  
+            filterName(value, count=1) {  
+                // 处理  
+                let newDataName = value + count;  
+                return newDataName;  // 返回值会替代 {{}} 的数据
+			}  
+        }  
+    });  
+</script>  
+</body>  
+</html>
+```
+
+#### 生命周期
+
+生命周期：生命周期回调函数（this指向是vue实例或组件实例）、生命周期钩子
+ 
+|生命周期函数|执行时机|阶段|单周期执行次数|应用场景|
+|:--:|:--:|:--:|:--:|:--:|
+|`created`|组件(元素)在内存中创建完毕|创建阶段|1|发起 ajax 请求|
+|`mounted`|组件初次渲染完毕(挂载完毕)|创建阶段|1|操作 DOM 元素|
+|`updated`|组件被重新渲染完毕|运行阶段|0或多|-|
+|`unmounted`|组件被销毁后（内存与页面）|销毁阶段|1|-|
+
+除此之外还有一些其他的生命周期函数。参考[vue官方文档](https://v3.cn.vuejs.org/api/options-lifecycle-hooks.html#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90)
+
+|生命周期函数|执行时机|阶段|单周期执行次数|应用场景|
+|:--:|:--:|:--:|:--:|:--:|
+|`beforeCreate`|组件在内存中创建之前|创建阶段|1|-|
+|`beforeMount`|组件渲染到页面之前|创建阶段|1|-|
+|`beforeUpdate`|组件被重新渲染之前|运行阶段|0或多|-|
+|`beforeUnmount`|组件被销毁之前|销毁阶段|1|-|
+
+案例：透明度切换
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <h2 :style="{opacity}">Hello World</h2>
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    const vm = new Vue({  
+        el: "#app",  
+        data: {  
+            opacity: 1,  
+        },  
+        mounted() {   // vue完成模板解析，并把真实DOM放入页面后调用  
+            setInterval(() => {  
+                this.opacity -= 0.01  
+                if (this.opacity <= 0) {  
+                    this.opacity = 1;  
+                }  
+            }, 16)  
+        }  
+    });  
+</script>  
+</body>  
+</html>
+```
+
+![](https://v2.cn.vuejs.org/images/lifecycle.png)
+
+
+* Init Event & Lifecycle
+	初始化：生命周期、事件，但数据代理未开始
+	此时`beforeCreate`不能通过vue实例访问data数据和methods中的方法
+	```html
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>Title</title>  
+	    <script src="../lib/vue-2.6.14.js"></script>  
+	</head>  
+	<body>  
+	<div id="app">  
+	    <h2>Hello World {{n}} </h2>   
+	</div>  
+	  
+	<script>  
+	    Vue.config.productionTip = false;  
+	  
+	    new Vue({  
+	        el: "#app",  
+	        data: {  
+	            n: 1,  
+	        },   
+	        beforeCreate() {  
+	            console.log(this)  // 没有 _data 属性  
+	            debugger;  // 断点调试  
+	        }  
+	    });  
+	</script>  
+	</body>  
+	</html>
+	```
+* Init injections & reactivity
+	初始化：数据监测、数据代理
+	此时`created`可以通过vm访问data中的数据、methods中的方法
+	```html
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>Title</title>  
+	    <script src="../lib/vue-2.6.14.js"></script>  
+	</head>  
+	<body>  
+	<div id="app">  
+	    <h2 :style="{opacity}">Hello World</h2>   
+	</div>  
+	  
+	<script>  
+	    Vue.config.productionTip = false;  
+	  
+	    const vm = new Vue({  
+	        el: "#app",  
+	        data: {  
+	            opacity: 1,  
+	        },  
+	        mounted() {   // vue完成模板解析，并把真实DOM放入页面后调用  
+	            setInterval(() => {  
+	                this.opacity -= 0.01  
+	                if (this.opacity <= 0) {  
+	                    this.opacity = 1  
+	                }  
+	            }, 16)  
+	        },  
+	        created() {  
+	            console.log(this)  // 有 _data 属性  
+	            debugger;
+	        }  
+	    });  
+	</script>  
+	</body>  
+	</html>
+	```
+* Has 'el' option -> Compile template ……
+	开始解析模板，生成虚拟 DOM 还不能在页面中显示
+	会先查看有无 `el` 配置，然后查看 `template` 选项
+	此时`beforeMount`，页面呈现的是未编译的 DOM 结构，对 DOM 操作全部失效
+	```html
+	<!DOCTYPE html>  
+	<html lang="en">  
+	<head>  
+	    <meta charset="UTF-8">  
+	    <title>Title</title>  
+	    <script src="../lib/vue-2.6.14.js"></script>  
+	</head>  
+	<body>  
+	<div id="app">  
+	    <h2>Hello World{{n}}</h2>  
+	</div>  
+	  
+	<script>  
+	    Vue.config.productionTip = false;  
+	  
+	    new Vue({  
+	        el: "#app",  
+	        data: {  
+	            n: 1,  
+	        },  
+	  
+	        beforeMount() {  
+	            document.getElementsByTagName("h2").value = "1";  
+	            debugger;  
+	        }  
+	    });  
+	</script>  
+	</body>  
+	</html>
+	```
+* create vm.$el and replace "el" with it
+	将内存中的虚拟 DOM 转为真实 DOM 插入到页面中去（真实DOM在$el中保存一份）
+	`mounted` 此时页面中呈现的为经过 Vue 编译的 DOM，一般在此时进行：开启定时器、发送请求、订阅消息、绑定自定义事件等==初始化操作==
+* Virtual DOM re-render and patch
+	根据新数据生成新的虚拟 DOM，最终页面更新，完成 Model -> View 过程
+	`beforeUpdate` 此时新数据还没有同步到页面中
+	`updated` 此时数据和页面保持同步
+* when vm.$destroy() is called
+	当调用销毁方法后，vue解绑实例的全部指令已经==自定义事件监听器==
+	`beforeDestroy` 此时vm所有的指令、data、methods还处于可用（对数据的更改不会重新解析模板）。一般在此时：关闭定时器、取消订阅消息、解绑自定义事件等==收尾操作==
+* Teardown watchers, child components and event listeners
+	移除自定义事件监听以及子组件全部移除
+	`destroyed` vue实例已移除
+
+完整的透明度切换
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <h2 :style="{opacity}">Hello World</h2>  
+    <button @click="stopTimer">停止</button>  
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    new Vue({  
+        el: "#app",  
+        data: {  
+            opacity: 1,  
+        },  
+        methods: {  
+          stopTimer() {  
+              this.$destroy()  
+          }  
+        },  
+        mounted() {  
+            this.timer = setInterval(() => {  
+                this.opacity -= 0.01  
+                if (this.opacity <= 0)  
+                    this.opacity = 1  
+            }, 16)  
+        },  
+        beforeDestroy() {  
+            clearInterval(this.timer)  
+        }  
+    });  
+  
+</script>  
+</body>  
+</html>
+```
 
 
 ### vue 组件基础
 
 #### 单页面应用程序
 
-单页面应用程序：简称 SPA 指的是一个网站中只有唯一的一个 HTML 亚眠，所有功能在这一个页面中实现
+单页面应用程序：简称 SPA 指的是一个网站中只有唯一的一个 HTML 页面，所有功能在这一个页面中实现
 
 仅仅在 web 页面初始化的时候加载相应的资源，一旦页面加载完成， SPA 不会因为用户的操作而**进行页面的重新加载或跳转**。而是利用 JS 动态的变换 HTML 的内容，从而实现页面与用户之间的交互
 
@@ -921,7 +1323,7 @@ export default {
 
 style节点默认是css语法，lang属性规定使用的语法，可以使用css、less、scss等
 
-```vue
+```html
 <style lang="css">
 h1 {
   color: red;
@@ -929,7 +1331,142 @@ h1 {
 </style>
 ```
 
-#### 组件使用
+组件分为
+* 非单文件组件
+	一个文件中包含n个组件（`.html`）
+* 单文件组件
+	一个文件只有一个组件（`.vue`）
+
+##### 非单文件组件
+
+```js
+// 创建组件  
+const person = Vue.extend({  
+    template: `<h2>{{name}}--{{age}}</h2>`,  
+    data() {   // 组件 data 必须是函数使用返回对象的形式（防止引用）  
+        return {  
+            name: "jack",  
+            age: 1,  
+        }  
+    },  
+})  
+
+// 简写
+const person = {
+	// 配置项
+}
+
+// 注册
+new Vue({  
+    el: "#app",  
+    components: {  
+        person   // 局部注册
+    }  
+});
+
+// 全局
+Vue.component("person", person);
+```
+
+##### VueComponent构造函数
+
+```js
+const school = Vue.extend({  
+    name: "school",  
+    template: `  
+        <h2>{{name}}</h2>    `,  
+    data() {  
+        return {  
+            name: '武大'  
+        }  
+    }  
+})
+
+console.log(school)
+```
+
+![](../../markdown_img/Pasted%20image%2020220903165315.png)
+
+组件本质就是一个==构造函数==，由`Vue.extend`生成，当使用组件（标签）时，Vue解析时会创建组件的实例对象（`new VueComponent(options)`）==每次调用== `Vue.extend` ==都会返回一个全新的==。组件中的 this 指向为 `VueComponent` 实例对象
+
+```js
+const school = Vue.extend({  
+    name: "school",  
+    template: `  
+    <div>        
+	    <h2>{{name}}</h2>        
+	    <button @click="show">ShowName</button>    
+    </div>    
+    `,  
+    data() {  
+        return {  
+            name: '武大'  
+        }  
+    },  
+    methods: {  
+        show() {  
+            console.log(this.name)  
+            console.log(this)  
+        }  
+    }  
+})
+```
+
+
+![](../../markdown_img/Pasted%20image%2020220903171026.png)
+
+**Vue 和 VueComponent 的内置关系（非常重要）**
+
+* `VueComponent.prototype.__proto__ == Vue.prototype`
+* 关于函数原型、原型链参考 [JS](../JS.md) 中的构造函数
+
+```js
+const school = Vue.extend({  
+    name: "school",  
+})  
+  
+new Vue({  
+    el: "#app",  
+})  
+  
+console.log(school.prototype.__proto__ === Vue.prototype)  // true
+```
+
+
+![](../../markdown_img/Pasted%20image%2020220903192557.png)
+
+Vue 强制让 `VueComponent` 原型对象指向 Vue 的原型对象，而不是指向 `Object` 的原型对象。这样可以让组件实例对象可以访问 Vue 原型上的属性和方法
+
+```js
+Vue.prototype.x = 1;  
+  
+const school = Vue.extend({  
+    name: "school",  
+    template: `<button @click="showX">showX</button>`,  
+    methods: {  
+        showX() {  
+            console.log(this.x)  
+        }  
+    }  
+})  
+  
+new Vue({  
+    el: "#app",  
+    components: {  
+        school  
+    }  
+})
+```
+
+上述中，vc并没有属性 x，但是通过==原型链==，先在组件的原型对象找，然后会找到 vue原型上的 x ，如果vue原型上也没有x，才会去object上查找（`undefined`）
+
+
+##### 单文件组件使用
+
+单文件组件（`.vue`）浏览器是不识别的，需要处理为 js（借助webpack或脚手架）
+
+在单文件中，Vue实例放在 `main.js` 中，只有 `App.vue` 根组件才可以在
+
 ##### 组件注册
 
 * **组件的注册**
@@ -981,57 +1518,57 @@ h1 {
 		</script>
 		~~~
 	
-	* 组件之间的样式冲突问题
-		默认情况下在`.vue`组件中的样式会全局生效，导致很容易造成组件之间的样式冲突问题		
-		例如：在父组件`App.vue`导入使用子组件`List.vue`时，更改父组件的样式，子组件的样式也会被更改
-		解决：人为的为每个组件分配唯一的自定义属性，在编写样式时，通过属性选择器来控制样式的作用域
-		~~~vue
-		<template>
-		  <div data-v-001>
-		    <h1 data-v-001>这是 App.vue 组件</h1>
-		    <p data-v-001>App 中的 p 标签</p>
-		    <p data-v-001>App 中的 p 标签</p>
-		    <hr data-v-001 />
-		    <my-list data-v-001></my-list>
-		  </div>
-		</template>
+* 组件之间的样式冲突问题
+	默认情况下在`.vue`组件中的样式会全局生效，导致很容易造成组件之间的样式冲突问题		
+	例如：在父组件`App.vue`导入使用子组件`List.vue`时，更改父组件的样式，子组件的样式也会被更改
+	解决：人为的为每个组件分配唯一的自定义属性，在编写样式时，通过属性选择器来控制样式的作用域
+	~~~vue
+	<template>
+	  <div data-v-001>
+		<h1 data-v-001>这是 App.vue 组件</h1>
+		<p data-v-001>App 中的 p 标签</p>
+		<p data-v-001>App 中的 p 标签</p>
+		<hr data-v-001 />
+		<my-list data-v-001></my-list>
+	  </div>
+	</template>
 
-		<style lang='less'>
-		  p[data-v-001] {
-		    color: red;
-		  }
-		</style>
-		~~~
+	<style lang='less'>
+	  p[data-v-001] {
+		color: red;
+	  }
+	</style>
+	~~~
 
-		但是这样非常的影响开发的效率，所以在style节点下提供了scoped属性，从而防止组件之间的样式冲突问题（会自动给每个DOM元素分配唯一的自定义属性）
-		~~~vue
-		<style scoped lang='less'>
-		  p {
-			  color: red;
-		  }
-		</style>
-		~~~
+	但是这样非常的影响开发的效率，所以在style节点下提供了scoped属性，从而防止组件之间的样式冲突问题（会自动给每个DOM元素分配唯一的自定义属性）
+	~~~vue
+	<style scoped lang='less'>
+	  p {
+		  color: red;
+	  }
+	</style>
+	~~~
 
-	* deep样式穿透
-		对于父组件如果设置了scoped属性，那么其样式是不会对子组件生效（每一个样式会自动加上属性选择器），如果想要某些样式对子组件生效，可以使用`deep()深度选择器`
-		~~~vue
-		<style scoped lang='less'>
-		.a :deep(.b) {
-			// style
-		}
-		</style>
-		~~~
-				 
-		示例：
-		~~~vue
-		<style lang='less' scoped>
-		  p {
-		    color: red;
-		  }
-		  :deep(.title) {   // deep深度选择器
-		    color: blue;
-		  }
-		</style>
+* deep样式穿透
+	对于父组件如果设置了scoped属性，那么其样式是不会对子组件生效（每一个样式会自动加上属性选择器），如果想要某些样式对子组件生效，可以使用`deep()深度选择器`
+	~~~vue
+	<style scoped lang='less'>
+	.a :deep(.b) {
+		// style
+	}
+	</style>
+	~~~
+			 
+	示例：
+	~~~vue
+	<style lang='less' scoped>
+	  p {
+		color: red;
+	  }
+	  :deep(.title) {   // deep深度选择器
+		color: blue;
+	  }
+	</style>
 		~~~
 
 **组件的 props**
@@ -1061,7 +1598,7 @@ props 是组件的自定义属性，组件的使用者可以通过 props 把数�
 <script>
 export default {
     name: "MyArticle",
-    // 外界传递指定的数据，到当前的组件中
+    // 外界传递指定的数据，到当前的组件的实例对象身上
     props: ['title', 'author']
     // 传参时，只用在标签中添加对应的属性和值即可，也可以是对象{属性名: 类型}
 }
@@ -1145,6 +1682,8 @@ data() {
 可以使用对象类型的 props
 
 ~~~vue
+<School name="jack" :age="18"></School>
+
 <script>
 export default {
 	props: {
@@ -1191,6 +1730,57 @@ export default {
 </script>
 ~~~
 
+
+##### mixins混合
+
+如果多个组件都用到了同一个配置项（钩子函数、回调等等），那么可以将此回调函数写到公共的`js`文件（`mixin.js`）中，然后再需要使用的组件中导入，在 `mixins` 配置项中配置
+
+混合可以理解为组件复用配置，混合中配置的优先级是低于组件自己配置的优先级的。==但是对于生命周期钩子都会保留，且此时会先执行混合中定义的生命周期钩子，再执行组件中定义的生命周期钩子==
+
+```js
+// mixin.js
+const meth = {  
+    methods: {  
+        showName() {  
+            alert(this.name)  
+        }  
+    }  
+}  
+  
+export {  
+    meth,  
+}
+
+
+// School.vue
+<template>  
+  <div>  
+    <h1 @click="showName">{{ name }}</h1>  
+  </div>  
+</template>  
+  
+<script>  
+import {meth} from "@/mixin";  
+  
+export default {  
+  name: "School",  
+  data() {  
+    return {  
+      name: '111'  
+    }  
+  },  
+  mixins: [meth]   // 混合配置项
+}  
+</script>  
+```
+
+如果向配置全局混合，在`main.js`中引入混合调用`Vue.mixin`即可
+
+```js
+// main.js
+import {meth} from "@/mixin";
+Vue.mixin(meth)
+```
 
 ##### 计算属性
 
@@ -1366,9 +1956,37 @@ this.fruitlist
 ```
 
 
+##### plugins插件
+
+插件本质是一个对象，用于增强 Vue 功能
+
+src下创建 `plugins.js`
+
+```js
+// plugins.js
+import {meth} from "@/meth.js"
+
+export default {  
+	// 第一个参数是 Vue 构造函数，后面为传入的参数
+    install(Vue, a, b) {    
+        console.log(Vue) // Vue function .....
+        console.log(a)   // 1
+        console.log(b)   // 2
+		// 插件中可以定义全局过滤器、全局指令、给Vue原型添加方法和属性
+		// 包括混合也可以定义在插件中
+		Vue.mixin(meth)
+    }  
+}
+
+// main.js
+import plugins from "@/plugins";
+Vue.use(plugins, 1, 2)  // 使用插件，后面是参数
+```
+
+
 ##### 自定义事件
 
-在自定义组件时，为了使用者可以监听到组件内的状态变化，需要用到组件的自定义事件（子传父）
+在自定义组件时，为了使用者可以监听到组件内的状态变化，需要用到组件的自定义事件（==子传父==），在之前实现子传父需要父提前准备一个函数，然后通过 props 传给子，子再调用此函数达到传递参数的目的
 
 **声明自定义事件**
 
@@ -1396,14 +2014,14 @@ export default {
 对于上述在 emits 节点下声明的自定义事件，可以通过`this.$emit('自定义事件名称', 参数)`的方法触发
 
 ~~~vue
+<!-- Counter.vue -->
 <script>
 export default {
-	// 自定义事件，必须先在 emits 中声明
-	emits: ['count-change'],
 	methods: {
 		onBthClick() {
 			this.count++;
-			this.$emit('count-change', this.count);  // 通过第二个参数传参
+			// 通过第二个参数传参
+			this.$emit('count-change', this.count);  
 		}
 	}
 }
@@ -2289,7 +2907,7 @@ mounted
 |`updated`|组件被重新渲染完毕|运行阶段|0或多|-|
 |`unmounted`|组件被销毁后（内存与页面）|销毁阶段|1|-|
 
-初次之外还有一些其他的生命周期函数。参考[vue官方文档](https://v3.cn.vuejs.org/api/options-lifecycle-hooks.html#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90)
+除此之外还有一些其他的生命周期函数。参考[vue官方文档](https://v3.cn.vuejs.org/api/options-lifecycle-hooks.html#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E9%92%A9%E5%AD%90)
 
 |生命周期函数|执行时机|阶段|单周期执行次数|应用场景|
 |:--:|:--:|:--:|:--:|:--:|
@@ -2546,7 +3164,7 @@ export default {
 			// 通过 this.$refs.引用名称 的方式可以获取到引用组件的实例
 
 			// 使用引用组件中的 add() 方法
-			this.$refs.counterRef.add();
+			this.$refs.counterRef.add();  // this.$refs.counterRef 获取的是组件实例对象
 		}
 	}
 }
@@ -2754,9 +3372,80 @@ export default {
 
 #### 自定义指令
 
-vue 内置的指令如果无法满足需求，可以自定义指令
+vue 内置的指令如果无法满足需求，可以自定义指令（不允许小驼峰）
 * 私有自定义指令
 * 全局自定义指令
+
+推荐使用 `-` 连接
+
+**指令函数(简写)调用时机**
+* 指令与元素成功绑定（并非在页面上）
+* 指令所在的模板被重新解析时
+
+```html
+<body>  
+<div id="app">  
+    <h2 v-mytext="n">{{n}}</h2>   <!-- 模拟实现 v-text -->    
+    <input type="text" v-my-bind="n"/>      <!-- 模拟实现 v-bind --></div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    new Vue({  
+        el: "#app",  
+        data: {  
+            n: 1,  
+        },  
+        directives: {  
+            // 接收两个参数  使用此指令的真实的 DOM 元素  对象，包含参数的值、定义的指令名字、使用指令名字等  
+            mytext(element, binding) {  
+                element.innerText = binding.value;  
+            },  
+            "my-bind": function(element, binding) {  
+                element.focus();   // 获取焦点（初次加载失败）
+                element.value = binding.value;  
+            }  
+        }  
+    });  
+</script>  
+</body>
+```
+
+vue会先绑定元素和指令，然后才会渲染页面，故第一次调用时不会focus失效
+
+![](../../markdown_img/Pasted%20image%2020220902105744.png)
+
+可以使用**对象形式**
+
+```js
+Vue.config.productionTip = false;  
+
+new Vue({  
+	el: "#app",  
+	data: {  
+		n: 1,  
+	},  
+	directives: {  
+		"my-bind": {  // 常用的三个回调函数
+			// 绑定时调用  
+			bind(element, binding) {  
+				element.value = binding.value;  
+			},  
+			// 元素插入页面调用  
+			inserted(element, binding) {  
+				element.focus();  
+			},  
+			// 指令所在模板被重新解析调用  
+			update(element, binding) {  
+				element.value = binding.value;  
+			}  
+		}  
+	}  
+});  
+```
+
+
+>指令中的所有 `this` 都是 `window` 不受 `vue` 管理
 
 **声明私有自定义指令**
 
@@ -2785,6 +3474,7 @@ export default {
 在 `main.js` 中 使用 `app.directive()` 声明
 
 ~~~js
+// Vue对象实例 app
 app.directive('focus', {
     mounted(el) {
         el.focus();
@@ -3234,6 +3924,64 @@ npm run bulid
 }
 ~~~
 
+**vue-cli项目目录**
+
+使用 treer 生成目录树形结构
+
+```sh
+npm i -g treer 
+treer -i "/node_modules|.git/"   # 多个可以使用正则表达式
+```
+
+```txt
+├─babel.config.js     // 将 ES6 语法转为 ES5，需要相关配置
+├─jsconfig.json       // 
+├─package-lock.json   // 包管理
+├─package.json        // 包管理
+├─README.md           // 项目文档
+├─vue.config.js       // vue设置
+├─src                 // 存放代码
+|  ├─App.vue          // 根组件
+|  ├─main.js          // 入口文件（全局配置、vm等）
+|  ├─components       // 放置组件
+|  |     ├─HelloWorld.vue
+|  |     └School.vue
+|  ├─assets           // 静态资源
+|  |   └logo.png
+├─public              // 页面
+|   ├─favicon.ico
+|   └index.html       // 主页面
+```
+
+`main.js`中的`render`配置项
+
+render是一个函数，当引入残缺版vue（没有模板解析），而需要写template配置时，可以使用render
+
+```js
+// main.js
+new Vue({
+	el: '#app',
+	render(createElement) {
+		return createElement('h1', 'msg')   // 创建元素，可以直接写vue组件
+	}
+	// 简写 render: h => h('h1', 'msg')
+})
+```
+
+脚手架的配置（主页面，入口文件等）在`vue.config.js` 中配置
+
+配置关闭语法检查（当文件有变量未使用，都会导致无法启动）
+
+```js
+const { defineConfig } = require('@vue/cli-service')  
+module.exports = defineConfig({  
+  transpileDependencies: true,  
+  lintOnSave: false,    // 关闭语法检查  
+})
+```
+
+
+
 #### 组件库
 
 **简介**
@@ -3365,3 +4113,551 @@ module.exports = {
 // 当前服务运行地址
 axios.defaults.baseURL = 'http://localhost:3000'
 ~~~
+
+
+## 示例
+
+### 列表的显示
+
+通过输入框的值，模糊查询显示列表
+
+**通过函数实现**
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <input v-model="temp"/>  
+    <ul>  
+        <li v-for="item in list"  
+            :key="item.id"  
+            v-show="isShow(temp, item.name)">  
+            {{item.name}} - {{item.age}}  
+        </li>  
+    </ul>  
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    const vm = new Vue({  
+        el: "#app",  
+        data: {  
+            temp: "",  
+            list: [  
+                {  
+                    id: "001",  
+                    name: "马冬梅",  
+                    age: "18",  
+                },  
+                {  
+                    id: "002",  
+                    name: "周冬雨",  
+                    age: "14",  
+                },  
+                {  
+                    id: "003",  
+                    name: "周杰伦",  
+                    age: "20",  
+                },  
+            ],  
+        },  
+        methods: {  
+            isShow(s, name) {  
+                if (!s) {  
+                    return true;  
+                }  
+                return name.indexOf(s) !== -1;  
+            }  
+        },  
+    });  
+  
+</script>  
+</body>  
+</html>
+```
+
+
+**通过watch实现**
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <input v-model="temp"/>  
+    <ul>  
+        <li v-for="item in fillList"  
+            :key="item.id">  
+            {{item.name}} - {{item.age}}  
+        </li>  
+    </ul>  
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    const vm = new Vue({  
+        el: "#app",  
+        data: {  
+            temp: "",  
+            list: [  
+                {id: "001", name: "马冬梅", age: "18"},  
+                {id: "002", name: "周冬雨", age: "14"},  
+                {id: "003", name: "周杰伦", age: "20"},  
+            ],  
+            fillList: []  // 过滤的数据  
+        },  
+        watch: {  
+            temp: {  
+                immediate: true,  
+                handler(newVal) {  
+                    this.fillList = this.list.filter((obj) => {  // filter 过滤返回新数组  
+                        return obj.name.indexOf(newVal) !== -1;  
+                    })  
+                }  
+            }  
+        }  
+    });  
+  
+</script>  
+</body>  
+</html>
+```
+
+
+**通过计算属性实现（优先使用）**
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <input v-model="temp"/>  
+    <ul>  
+        <li v-for="item in fillList"  
+            :key="item.id">  
+            {{item.name}} - {{item.age}}  
+        </li>  
+    </ul>  
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    const vm = new Vue({  
+        el: "#app",  
+        data: {  
+            temp: "",  
+            list: [  
+                {id: "001", name: "马冬梅", age: "18"},  
+                {id: "002", name: "周冬雨", age: "14"},  
+                {id: "003", name: "周杰伦", age: "20"},  
+            ],  
+        },  
+        computed: {  
+            fillList() {  
+                return this.list.filter((obj) => {  
+                    return obj.name.indexOf(this.temp) !== -1;  
+                });  
+            }  
+        }  
+    });  
+  
+</script>  
+</body>  
+</html>
+```
+
+在上面基础上制作升序降序以及默认排序按钮
+
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <label>  
+        <input v-model="temp"/>  
+    </label>  
+    <button @click="sortType = 0">升</button>  
+    <button @click="sortType = 1">降</button>  
+    <button @click="sortType = 2">原</button>  
+  
+    <ul>   <!-- 数据全部来源于 fillList 故关于数据的操作全部在 fillList 中完成 -->
+        <li v-for="item in fillList"   
+            :key="item.id">  
+            {{item.name}} - {{item.age}}  
+        </li>  
+    </ul>  
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    new Vue({  
+        el: "#app",  
+        data: {  
+            temp: "",  
+            list: [  
+                {id: "001", name: "马冬梅", age: "18"},  
+                {id: "002", name: "周冬雨", age: "24"},  
+                {id: "003", name: "周杰伦", age: "20"},  
+                {id: "004", name: "张一山", age: "26"},  
+                {id: "005", name: "刘德华", age: "40"},  
+            ],  
+            sortType: 2,   // 0：升  1：降  2：默认  
+        },  
+        computed: {  
+            fillList: {  
+				get() {  
+				    let tmp = this.list.filter((obj) => {  
+				        return obj.name.indexOf(this.temp) !== -1;  
+				    });  
+				    switch (this.sortType) {  
+				        case 0:  
+				            tmp.sort((a, b) => a.age - b.age);  
+				            break;  
+				        case 1:  
+				            tmp.sort((a, b) => b.age - a.age);  
+				            break;  
+				    }  
+				    // 可以用三元代替
+					// if (this.sortType !== 2) {  
+					//     tmp.sort((o1, o2) => {  
+					//         return this.sortType ? o2.age-o1.age : o1.age-o2.age;  
+					//     });  
+					// }
+				    return tmp;  
+				},
+            }  
+        },  
+    });  
+  
+</script>  
+</body>  
+</html>
+```
+
+
+### v-model 收集表单数据
+
+* `type="text"、"password"、"radio"` 时，获取的是value值，需要配置value
+* `type="checkbox"` 时，如果没有配置value，当v-model初始值为非数组获取的是是否勾选bool，如果初始值为数组获取的是勾选的元素的数组
+
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Title</title>  
+    <script src="../lib/vue-2.6.14.js"></script>  
+</head>  
+<body>  
+<div id="app">  
+    <form @submit.prevent="submit">  
+        <label><span>账号: </span><input type="text" v-model.trim="userInfo.account"/></label>  
+        <br><br>  
+        <label><span>密码: </span><input type="password" v-model.trim="userInfo.password"/></label>  
+        <br><br>  
+        <label><span>年龄: </span><input type="number" v-model.number="userInfo.age"/></label>  
+        <br><br>  
+        <span>性别: </span>  
+        <label><span>男</span><input type="radio" name="sex" v-model="userInfo.sex" value="男"/></label>  
+        <label><span>女</span><input type="radio" name="sex" v-model="userInfo.sex" value="女"/></label>  
+        <br><br>  
+        <span>爱好: </span>  
+        <label><span>抽烟</span><input type="checkbox" v-model="userInfo.hobby" value="抽烟"/></label>  
+        <label><span>喝酒</span><input type="checkbox" v-model="userInfo.hobby" value="喝酒"/></label>  
+        <label><span>烫头</span><input type="checkbox" v-model="userInfo.hobby" value="烫头"/></label>  
+        <br><br>  
+        <span>所属校区: </span>  
+        <label>  
+            <select v-model="userInfo.city">  
+                <option value="">请选择</option>  
+                <option value="北京">北京</option>  
+                <option value="上海">上海</option>  
+                <option value="深圳">深圳</option>  
+                <option value="湖北">湖北</option>  
+            </select>  
+        </label>  
+        <br><br>  
+        <label>  
+            <span>其他</span>  
+            <textarea v-model.lazy="userInfo.other"></textarea>  
+        </label>  
+        <br><br>  
+        <label><input type="checkbox" v-model="userInfo.agree"/></label>  
+        <span>阅读并接受<a href="">《用户协议》</a></span>  
+        <br><br>  
+        <button>提交</button>  
+    </form>  
+</div>  
+  
+<script>  
+    Vue.config.productionTip = false;  
+  
+    const vm = new Vue({  
+        el: "#app",  
+        data: {  
+            userInfo: {  
+                account: '',  
+                password: '',  
+                sex: '',  
+                hobby: [],  
+                city: '',  
+                other: '',  
+                agree: false,  
+                age: '',  
+            }  
+        },  
+        methods: {  
+            submit() {  
+                // console.log(JSON.stringify(this._data))   不建议  
+                console.log(JSON.stringify(this.userInfo))  
+            }  
+        }  
+    });  
+</script>  
+</body>  
+</html>
+```
+
+
+### Todo列表
+
+组件间通过App.vue通信
+
+**App.vue**
+
+一般来说，不会将列表数据传入`Input`和`Foot`，为了可以在这两个组件实现添加和删除，可以在`App.vue`中定义添加删除的函数，只需要接收删除和添加的元素，在`App.vue`中完成，而子组件只需要传入函数，然后在事件函数中调用父组件传入的函数即可
+
+如果想要数据本地存储，可以给 `TodoList` 添加侦听器（由于更改复选框属于更改数组中对象里的属性，所以需要深度侦听 `deep`），然后更改TodoList从浏览器本地获取，每次更新 `TodoList` 就将数据同步到浏览器
+
+```vue
+<template>  
+  <div>  
+	<Input :TodoList="TodoList"/>  <!-- 可以传入函数 addTodo -->
+	<List :TodoList="TodoList"/>  
+	<Foot :TodoList="TodoList"/>
+  </div>  
+</template>  
+  
+<script>  
+import Input from "@/components/Input";  
+import List from "@/components/List";  
+import Foot from "@/components/Foot";  
+  
+export default {  
+  name: "App",  
+  data() {  
+    return {  
+      TodoList: [  
+        {id: 0, msg: "起床", flag: false},  
+        {id: 1, msg: "睡觉", flag: false},  
+        {id: 2, msg: "吃饭", flag: false},  
+      ]  
+      // TodoList: JSON.parse(localStorage.getItem('TodoList')) || []
+    }  
+  },  
+  components: {  
+    Input,  
+    List,  
+    Foot  
+  },
+  //methods: {  
+  //addTodo(obj) {  
+  //  if (obj) {  
+  //    this.TodoList.unshift(obj)  
+  //  }  
+  //},    
+  // watch: {  
+  //   TodoList: {  
+  //     deep: true,  
+  //     handler(value) {  
+  //       localStorage.setItem("TodoList", JSON.stringify(value))  
+  //     }  
+  //   }  
+  // }
+}  
+</script>  
+  
+<style>  
+ul {  
+  list-style: none;  
+}  
+</style>
+```
+
+**Input.vue**
+
+id需要唯一标识，可以使用`Date.now()` 获取当前时间戳来作为id，除此之外，可以借助第三方库实现
+
+* `uuid`：通过计算机地址物理地址国家等信息，生成全球唯一字符串标识，但体积很大
+* `nanoid`：相当于 `uuid` 的简化版，体积非常小，直接调用 `nanoid()` 即可生成唯一标识
+
+由于数据特殊，Vue无法侦听到对象中元素变化，所以可以采用 `v-model` 修改数据，但是不是很建议
+
+```vue
+<template>  
+  <input type="txt" @keyup.enter="add" v-model.trim="msg"/> 
+</template>  
+  
+<script>  
+import {nanoid} from 'nanoid'
+
+export default {  
+  name: "Input",  
+  data() {  
+    return {  
+      msg: ""  
+    }  
+  },  
+  props: {  
+    TodoList: {     // 可以不接受列表，改为函数 addTodo
+      type: Array,  
+      required: true  
+    }  
+  },  
+  methods: {  
+    add() {     // 在回调函数中处理好要添加的对象，然后调用 addTodo 即可
+      if (this.msg) {  
+        this.TodoList.unshift({id: nanoid(), msg: this.msg, flag: false})  
+        this.msg = ""
+      }  
+    },  
+  }  
+}  
+</script>  
+  
+<style scoped>  
+  
+</style>
+```
+
+**List.vue**
+
+```vue
+<template>  
+  <div id="List">  
+    <ul>  
+      <li v-for="item in TodoList" :key="item.id">  
+	    <!-- vue无法检测对象里数据的变化 -->
+        <input type="checkbox" v-model="item.flag"/>  
+        <span>{{item.msg}}</span>  
+        <button @click="deleteList(item.id)">Delete</button>  
+      </li>  
+    </ul>  
+  </div>  
+</template>  
+  
+  
+<script>  
+export default {  
+  name: "List",  
+  props: {  
+    TodoList: {  
+      type: Array,  
+      required: true  
+    }  
+  },  
+  methods: {  
+    deleteList(id) {  
+      let index = this.TodoList.findIndex((item) => item.id === id)  
+      this.TodoList.splice(index, 1)  
+    }  
+  }  
+}  
+</script>  
+  
+<style scoped>  
+  
+</style>
+```
+
+**Foot.vue**
+
+```vue
+<template>  
+  <div>  
+    <input type="checkbox" v-model="All">  
+    <span>已完成{{ count }}/总{{ TodoList.length }}</span>  
+    <button @click="clear">清除已完成</button>  
+  </div>  
+</template>  
+  
+<script>  
+export default {  
+  name: "Foot",  
+  props: {  
+    TodoList: {  
+      type: Array,  
+      required: true  
+    }  
+  },  
+  methods: {  
+    clear() {  
+      let arr = this.TodoList.filter(item => !item.flag)  
+      let n = this.TodoList.length  
+      this.TodoList.splice(0, n)  
+  
+      arr.forEach(item => {  
+        this.TodoList.push(item)  
+      })  
+    }  
+  },  
+  computed: {  
+    count() {  
+      let n = 0  
+      this.TodoList.forEach((item) => {  
+        n += item.flag ? 1 : 0  
+      })  
+      return n  
+    },  
+    All: {  
+      get() {  
+        if (this.TodoList) {  
+          return false  
+        }  
+        return this.TodoList.every((item) => item.flag)  
+      },  
+      set(val) {  
+        this.TodoList.forEach((item) => {  
+          item.flag = val  
+        })  
+      }  
+    }  
+  },  
+}  
+</script>
+```
+
+**main.js**
+
+```js
+import Vue from 'vue'  
+import App from '@/App.vue'  
+
+Vue.config.productionTip = false  
+
+new Vue({  
+  render: h => h(App),  
+}).$mount('#app')
+```

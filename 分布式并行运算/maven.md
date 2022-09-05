@@ -15,6 +15,8 @@ maven根目录
 %MAVEN_HOME%\bin
 ```
 
+### 配置setting.xml
+
 找到根目录下的`config\setting.xml`，配置本地仓库
 
 ```xml
@@ -50,5 +52,7 @@ maven根目录
 </profile>
 ```
 
+### 配置IDEA中的Maven
 
- 
+在IDEA的`文件->设置->构建、执行、部署->构建工具->Maven`中选择Maven主路径为本地的Maven路径
+
