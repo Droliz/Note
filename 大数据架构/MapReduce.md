@@ -227,3 +227,21 @@ public class WordCount {
 ```sh
 hadoop jar FILE_NAME.jar CLASS_NAME
 ```
+
+
+
+## 流程
+
+
+Map首先将输出写到环形缓存当中，开始spill过程：  
+**job.setPartitionerClass(PartitionClass.class);**  
+【按key分区】map阶段最后调用。对key取hash值(或其它处理)，指定进入哪一个reduce
+
+**job.setSortComparatorClass(SortComparator.class);**  
+【按key排序】每个分区内，对 键 或 键的部分 进行排序，保证分区内局部有序；
+
+**job.setGroupingComparatorClass(Grouptail.class);**  
+【按key分组】构造一个key对应的value迭代器。同一分区中满足同组条件（可以是不同的key）的进入同一个Interator，执行一次reduce方法；
+
+
+![](../markdown_img/Pasted%20image%2020220909151548.png)

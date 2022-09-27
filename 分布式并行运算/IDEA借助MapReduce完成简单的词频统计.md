@@ -140,6 +140,53 @@ public class WordCount {
 }
 ```
 
+如果想通过jar包的形式动态输入路径可以如下
+
+```java
+public static void main(String[] args) 
+	throws IOException, InterruptedException, ClassNotFoundException{  
+	// TODO Auto-generated method stub  
+	Configuration conf = new Configuration();  
+	GenericOptionsParser parser = new GenericOptionsParser(conf, args);  
+	String[] otherArgs = parser.getRemainingArgs();  
+	if (args.length < 2) {  
+		System.err.println("Usage: <ClassName> <in_path> <output>");  
+		System.exit(2);  
+	}  
+	
+	//1.MR由Job对象去提交任务  
+	Job job = Job.getInstance(conf);  
+	//2.告知job提交的信息  
+	job.setMapperClass(MapTask.class);  
+	job.setReducerClass(ReduceTask.class);  
+	job.setJarByClass(WordCount.class);  
+	//3.告知MR，输出类型 （只需要设置输出类型）  
+	//map的输出  
+	job.setMapOutputKeyClass(Text.class);  
+	job.setMapOutputValueClass(IntWritable.class);  
+	//reduce的输出  
+	job.setOutputKeyClass(Text.class);  
+	job.setOutputValueClass(IntWritable.class);  
+	
+	FileSystem fileSystem = FileSystem.get(conf);  
+	if(fileSystem.exists(new Path(otherArgs[1]))) {  
+		fileSystem.delete(new Path(otherArgs[1]),true);  
+	}  
+	
+	// 设置输入和输出的目录  
+	FileInputFormat.addInputPath(job, new Path(otherArgs[0]));  
+	FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
+	  
+	// 执行，直到结束就退出  
+	boolean b = job.waitForCompletion(true);  
+	System.out.println(b ? "没问题！！" : "失败");  
+}
+
+
+// 运行
+hadoop jar NAME.jar CLASS_NAME In_Path Out_path
+```
+
 启动 hadoop
 
 ```sh
