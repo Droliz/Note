@@ -8,7 +8,6 @@ RDD提供了一组丰富的操作以支持常见的数据运算，分为“行�
 
 两类操作的主要区别是，转换操作（比如map、filter、groupBy、join等）接受RDD并返回RDD，而行动操作（比如count、collect等）接受RDD但是返回非RDD（即输出一个值或结果）
 
-
 ## Transformation算子
 
 ### value 类型算子
@@ -31,13 +30,13 @@ data_rdd.map((_, 1)).foreach(println)
 
 将`"hello", "hadoop", "hello", "spark"`的数据通过map把每一个数据项从`word => (word, 1)`
 
-![](../../../markdown_img/Pasted%20image%2020220927090907.png)
+![](../../../../../markdown_img/Pasted%20image%2020220927090907.png)
 
 #### flatmap
 
 `flatmap = map + flatten`
 
-![](../../../markdown_img/Pasted%20image%2020220924144824.png)
+![](../../../../../markdown_img/Pasted%20image%2020220924144824.png)
 
 
 ```scala
@@ -89,6 +88,7 @@ data_rdd.mapPartitions(_.map((_, 1)))
 以分区为单位对数据进行处理，这里的处理是指可以进行任意的处理，哪怕是过滤数据
 
 相较于map，mapPartitions可以计算每个分区的最大值
+
 #### mapPartitionsWithIndex
 
 类似mapPartition，比mapPartitions多一个参数来表示分区号
@@ -499,4 +499,55 @@ val conf = new SparkConf().setMaster("local[*]").setAppName("Operator")
     // saveAsSequenceFile 方法要求数据的格式必须为 K-V 键值对类型  
     rdd.saveAsSequenceFile("data/output2")  
     sc.stop()
+```
+
+## 序列化
+
+RDD算子中传递的函数是会包含闭包操作，那么就会进行闭包检测
+
+在scala中类的构造参数是类的属性，构造参数需要进行闭包检测，等同于类需要闭包检查，要么创建样例类`case`，要么混入`Serializable`，或者创建局部变量
+
+```scala
+def main(args: Array[String]): Unit = {  
+  // 1、建立和 spark 框架的连接   类似 jdbc    local[*]    * 代表线程数  
+  val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")  
+  val sc = new SparkContext(sparkConf)  
+  
+  val rdd = sc.makeRDD(Array("hadoop", "good"))  
+  
+  val search = new search("h")  
+  
+  search.getMatch1(rdd)   // Task not serializable  
+  search.getMatch2(rdd)    // Task not serializable  
+    .collect()  
+    .foreach(println)  
+  
+  sc.stop()  
+  
+}  
+  
+case class search(query: String) {  
+  def isMach(s: String): Boolean = {  
+    s.contains(query)  
+  }  
+  
+  // 函数序列化  
+  def getMatch1(rdd: RDD[String]): RDD[String] = {  
+    rdd.filter(isMach)  
+  }  
+  
+  // 属性序列化  
+  def getMatch2(rdd: RDD[String]): RDD[String] = {  
+    // val s = query    也可以解决序列化问题    
+rdd.filter(_.contains(query))  // _contains(s)  
+  }  
+}
+```
+
+java的序列化可以序列化任何类，但是字节多传输效率低spark2.x支持另一种序列化框架`kryo`，比较轻巧，即便使用`kryo`也需要继承`Serializable`接口
+
+RDD在shuffle数据时，简单数据类型、数组、字符串以及在spark内部使用Kryo序列化
+
+```scala
+
 ```
