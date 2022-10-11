@@ -75,6 +75,27 @@ println(lines.flatMap(_.split(" ")))
 // List(Hadoop, Hbase, Hive, Hadoop, Spark, scala, Java, mysql)
 ```
 
+flatmap事实上是将一个元素对应出想要的多个元素，最后全部扁平化到一个集合中，那么就有一个很有趣的，可以在源数据的基础上新增根据原数据运算出来的数据
+
+```scala
+def test(): Unit = {  
+  val sparkConf=new SparkConf().setMaster("local[*]").setAppName("111")  
+  val sc = new SparkContext(sparkConf)  
+  
+  val rdd = sc.makeRDD(List(1, 2, 3, 4, 5))  
+  
+  val newRdd = rdd.flatMap(item => {  
+    List(item + 1, item + 2, item + 3)  
+  })  
+  
+  val a = newRdd.collect()  
+  println(a.mkString(","))  
+}
+
+
+// 2,3,4,3,4,5,4,5,6,5,6,7,6,7,8
+```
+
 #### mapPartitions
 
 与map算子类似，但传入的参数是一个迭代器（一次接受所有），通过迭代器可以访问各数据项，效率要比map更高

@@ -40,9 +40,32 @@ Time taken: 0.137 seconds, Fetched: 5 row(s)
 
 ## 使用spark-sql连接hive
 
-连接hive需要启动hive2服务，hive2服务是专门用于第三方连接的
+将hive的conf目录下的`hive-site.sh`拷贝到`spark`的conf目录下
+
+将hive的`lib`目录下的mysql驱动拷贝到`soark`的`jars`目录下
+
+**启动spark并打开spark-sql**
 
 ```sh
-hive --service hiveserver2
+./sbin/start-all.sh
+
+./bin/spark-sql
 ```
 
+在hive中查看表
+
+![](../../../../markdown_img/Pasted%20image%2020221010152859.png)
+
+在spark中查看表
+
+![](../../../../markdown_img/Pasted%20image%2020221010152845.png)
+
+至此，spark-sql中访问的hive 就是外部的hive
+
+查看数据
+
+```spark-sql
+select * from student;
+```
+
+![](../../../../markdown_img/Pasted%20image%2020221010153018.png)

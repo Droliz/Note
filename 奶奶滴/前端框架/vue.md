@@ -135,7 +135,7 @@ module.exports = {
     * webpack中的HTML插件（类似模板引擎插件）
     * 可以自定义index.html页面的内容
 
-~~~JS
+```JS
 // webpack.config.js
 const HtmlPlugin = require('html-webpack-plugin');
 
@@ -149,20 +149,20 @@ module.exports = {
     mode: 'development',
     plugins: [htmlPlugin],     // 通过 plugins 节点添加插件
 }
-~~~
+```
 
 **devServer节点**
 
 在`webpack.config.js`配置文件中，可以通过devServer节点对webpack-dev-server插件进行更多的配置
 
 示例：
-~~~js
+```js
 devServer: {
 	open: true,   // 初次打包，自动打开浏览器
 	host: '127.0.0.1',  // 访问的ip地址
 	port: 8080,   // 端口
 }
-~~~
+```
 
 #### loader
 
@@ -195,7 +195,7 @@ $(function () {
 });
 ```
 
-~~~css
+```css
 /* index.css */
 
 #list {
@@ -203,7 +203,7 @@ $(function () {
     padding: 0;
     margin: 0;
 }
-~~~
+```
 
 ```js
 // webpack.config.json
@@ -230,7 +230,7 @@ module.exports = {
 当指定的url资源过多会影响资源的加载效率，此时可以在使用规则时用查询字符串的方式添加规则`?limit=INT`当图片资源不大于INT（单位byte）会转为base64格式
 
 两种方法效果相同
-~~~js
+```js
 // webpack.config.js
 { test: /\.(jpg|png|gif)$/, use: ['url-loader?limit=2000'] },
 
@@ -241,28 +241,28 @@ module.exports = {
 			limit: '2000'
 		}
 	}}
-~~~
+```
 
 **打包高级js**
 
 webpack只能打包处理一部分高级的js语法。对于无法处理的高级js语法可以借助于`babel-loader`进行打包处理
 
-~~~sh
+```sh
 npm i babel-loader @babel/core @babel/plugin-proposal-class-properties -D
-~~~
+```
 
 示例：
 
-~~~js
+```js
 // index.js
 class Person {
 	// 通过 static 关键字，为 Person 类定义了一个静态属性 info
 	// webpack 无法打包 静态属性
 	static info = 'person info'
 }
-~~~
+```
 
-~~~js
+```js
 // webpack.config.js
 {
 	test: /\.js$/,
@@ -276,7 +276,7 @@ class Person {
 		},
 	}
 }
-~~~
+```
 
 
 #### 打包发布
@@ -291,27 +291,27 @@ class Person {
 
 在package.json的script添加脚本
 
-~~~json
+```json
 "script": {
 	"build": "webpack --mode production"    // 这里的mode会覆盖webpack配置文件中的mode
 }
-~~~
+```
 
 打包完成会在根目录下生成dist目录，储存所有的文件
 
 如果想在dist中将不同类型的文件分类，可以在`webpack.config.js`中的output节点配置输出的路径（包含文件名）
 
-~~~js
+```js
 // js分类
 output: {
 	path: path.join(__dirname, './dist'),
 	filename: 'js/index.js'
 }
-~~~
+```
 
 修改`url-loader`配置项，新增outputPath为对应的文件夹，实现对图片的分类
 
-~~~js
+```js
 use: {
 	loader: 'url-loader',
 	options: {
@@ -319,7 +319,7 @@ use: {
 		outputPath: 'images/',
 	}
 }},
-~~~
+```
 
 自动清理dist的旧文件
 
@@ -327,14 +327,14 @@ use: {
 
 在`webpack-config.js`配置自动清除
 
-~~~js
+```js
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const cleanPlugin = new CleanWebpackPlugin();
 plugins: [
         htmlPlugin,
         cleanPlugin,
     ],
-~~~
+```
 
 **企业级项目打包发布流程**
 
@@ -364,7 +364,7 @@ Source Map 就是一个信息文件，里面储存这位置信息，就是代码
 
 可以只定位行数，但不定位源代码，需要将`devtool`值设置为`nosources-source-map`
 
-~~~js
+```js
 // webpack.config.js
 const path = require('path');
 const HtmlPlugin = require('html-webpack-plugin');
@@ -427,7 +427,7 @@ module.exports = {
         ]
     },
 }
-~~~
+```
 
 
 ---
@@ -618,12 +618,12 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 * **内容渲染**指令
 	辅助开发者渲染DOM的元素的文本内容
 	* v-text
-		~~~js
+		```js
 		// 将username对应的值渲染到标签 p 中
 		<p v-text='username'><p>
-		~~~
+		```
 		注意：v-text会覆盖元素内默认的值
-		~~~html
+		```html
 		<body>
 		    <div id="app">
 		        <p v-text="username"></p>
@@ -642,10 +642,10 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 		        // vm.$mount("#app");   // 替代 el
 		    </script>
 		</body>
-		~~~
+		```
 	* {{}}
 		插值表达式：相当于占位符，相比v-text不会覆盖默认文本内容
-		~~~html
+		```html
 		<body>
 		    <div id="app">
 		        <p>name: {{username}}</p>
@@ -662,14 +662,14 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 		        });
 		    </script>
 		</body>
-		~~~
+		```
 		插值可以直接使用所有vue实例对象的属性，以及表达式（例如：`1+1`）
 	* v-html
 		用于渲染包含html标签的数据
 * 属性绑定指令
 	* v-bind
 		为元素的属性动态绑定属性值
-		~~~html
+		```html
 		<body>
 		    <div id="app">
 			    <!-- js表达式 -->
@@ -687,7 +687,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 		        });
 		    </script>
 		</body>
-		~~~ 
+		``` 
 		也可以不写`v-bind`，直接`:属性`表示动态绑定属性
 		
 	{{}}和v-bind都可以使用js的表达式（四则、三元以及一些数组字符串的方法）
@@ -704,7 +704,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 * 事件绑定指令
 	* v-on
 		监听事件：一般使用@代替v-on，给DOM元素绑定时间监听，处理的函数需要在methods节点声明
-		~~~html
+		```html
 		<body>
 		    <div id="app">
 		        <h3>count 的值为 {{count}}</h3>
@@ -733,7 +733,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 		        });
 		    </script>
 		</body>
-		~~~
+		```
 	* 事件修饰符
 		* .prevent：阻止默认行为（a标签的跳转、表单提交等）
 		* .stop：阻止事件冒泡
@@ -766,7 +766,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 
 * 双向绑定指令
 	* v-model
-		~~~html
+		```html
 		<body>
 		    <div id="app">
 		        <p>用户名 {{username}} </p>
@@ -795,7 +795,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 		        });
 		    </script>
 		</body>
-		~~~
+		```
 	注意：只能联合表单使用（默认获取value数据`v-model === v-model:value`）
 	* 修饰符
 		* .number：将用户输入值转为数值
@@ -806,7 +806,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 * 条件渲染指令
 	* v-if、v-show
 		都可以辅助控制元素的显示与隐藏（`"布尔值"`)
-		~~~html
+		```html
 		<body>
 		    <div id="app">
 		        <button @click="flag = !flag">Toggle Flag</button>
@@ -826,7 +826,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 		        });
 		    </script>
 		</body>
-		~~~
+		```
 		
 	>不同的是 v-if是动态的创建或移除 DOM 元素，而v-show是动态的添加或移除`display:none`样式，所以，在运行时，如果频繁切换条件，那么使用v-show，反之使用v-if
 
@@ -838,7 +838,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 * 列表渲染指令
 	* v-for
 		基于数组来循环渲染相似的UI结构`(item, index) in items`形式，index可选
-		~~~html
+		```html
 		<body>
 		    <div id="app">
 		        <ul>
@@ -865,11 +865,11 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 		        });
 		    </script>
 		</body>
-		~~~
+		```
 	
 	列表数据变化时，会默认复用已存在的 DOM 元素，但会导致有状态的列表（被勾选的多选框）无法被正确更新。使用key维护列表的状态
 
-	~~~html
+	```html
 	<body>
 		<div id="app">
 			<div>
@@ -913,7 +913,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 			});
 		</script>
 	</body>
-	~~~
+	```
 	注意：key的值只能是字符串或数值、key的值必须唯一、 index当作key的值没有意义，index的值不唯一、一般情况下使用v-for就使用key、一般将数据项的id属性作为key的值
 
 虚拟DOM对比算法（通过key比较，相同的复用，不同的新生成）
@@ -1234,7 +1234,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 
 使用vite初始化一个 SPA 项目
 
-~~~sh
+```sh
 # 初始化项目
 npm init vite-app project_name
 # 安装依赖包
@@ -1242,7 +1242,7 @@ cd project_name
 npm install
 # 启动项目
 npm run dev
-~~~
+```
 
 项目运行流程
 
@@ -1253,16 +1253,16 @@ npm run dev
 
 在.vue文件中，所有的模板都要写在`template`标签下
 
-~~~vue
+```vue
 <template>
   <img alt="Vue logo" src="./assets/logo.png" />
   <HelloWorld msg="Hello Vue 3.0 + Vite" />
 </template>
-~~~
+```
 
 在main.js中进行渲染
 
-~~~js
+```js
 // createApp 创建 vue 的单页面应用程序实例
 import { createApp } from 'vue'
 
@@ -1272,7 +1272,7 @@ import './index.css'
 
 // 指定渲染的区域
 createApp(App).mount('#app')
-~~~
+```
 
 #### 组件化开发思想
 
@@ -1302,7 +1302,7 @@ script节点中可以封装当前组件的js业务逻辑，通过 `export defaul
 * data：可以通过 data 节点传出渲染期间组件需要用到的数据
 * methods：组件中的处理函数必须在methods节点中
 
-~~~vue
+```vue
 <script>
 export default {
   name: 'HelloWorld',
@@ -1318,7 +1318,7 @@ export default {
   }
 }
 </script>
-~~~
+```
 
 **style节点**
 
@@ -1477,7 +1477,7 @@ new Vue({
 	组件之间可以相互的引用（先注册后使用）
 	* 全局注册组件：全局任何一个组件都可以使用
 		![](../../markdown_img/Pasted%20image%2020220616212145.png)
-		~~~js
+		```js
 		// main.js
 		// createApp 创建 vue 的单页面应用程序实例
 		import { createApp } from 'vue'
@@ -1494,12 +1494,12 @@ new Vue({
 		
 		// 指定渲染的区域
 		app.mount('#app')
-		~~~
+		```
 
 	* 局部注册组件：在当前注册的范围内使用
 		![](../../markdown_img/Pasted%20image%2020220616212225.png)
 		在需要的组件的script中注册（在components中添加，用标签的形式使用）
-		~~~vue
+		```vue
 		<!-- App.vue -->
 		<script>
 		import Test from "./components/Test.vue";
@@ -1517,13 +1517,13 @@ new Vue({
 		  },
 		};
 		</script>
-		~~~
+		```
 	
 * 组件之间的样式冲突问题
 	默认情况下在`.vue`组件中的样式会全局生效，导致很容易造成组件之间的样式冲突问题		
 	例如：在父组件`App.vue`导入使用子组件`List.vue`时，更改父组件的样式，子组件的样式也会被更改
 	解决：人为的为每个组件分配唯一的自定义属性，在编写样式时，通过属性选择器来控制样式的作用域
-	~~~vue
+	```vue
 	<template>
 	  <div data-v-001>
 		<h1 data-v-001>这是 App.vue 组件</h1>
@@ -1539,29 +1539,29 @@ new Vue({
 		color: red;
 	  }
 	</style>
-	~~~
+	```
 
 	但是这样非常的影响开发的效率，所以在style节点下提供了scoped属性，从而防止组件之间的样式冲突问题（会自动给每个DOM元素分配唯一的自定义属性）
-	~~~vue
+	```vue
 	<style scoped lang='less'>
 	  p {
 		  color: red;
 	  }
 	</style>
-	~~~
+	```
 
 * deep样式穿透
 	对于父组件如果设置了scoped属性，那么其样式是不会对子组件生效（每一个样式会自动加上属性选择器），如果想要某些样式对子组件生效，可以使用`deep()深度选择器`
-	~~~vue
+	```vue
 	<style scoped lang='less'>
 	.a :deep(.b) {
 		// style
 	}
 	</style>
-	~~~
+	```
 			 
 	示例：
-	~~~vue
+	```vue
 	<style lang='less' scoped>
 	  p {
 		color: red;
@@ -1570,7 +1570,7 @@ new Vue({
 		color: blue;
 	  }
 	</style>
-		~~~
+		```
 
 **组件的 props**
 
@@ -1580,14 +1580,14 @@ new Vue({
 
 props 是组件的自定义属性，组件的使用者可以通过 props 把数据传递到子组件内部，供子组件内部进行使用
 
-~~~vue
+```vue
 <!-- 通过自定义 props，把文章的标题和作者，传递到 my-article 组件中 -->
 <my-article title="键盘敲烂，月入过万" author="Droliz"></my-article>
-~~~
+```
 
 将动态的数据项声明为 props 自定义属性。自定义属性可以在当前的组件的模板结构中被直接使用
 
-~~~vue
+```vue
 <!-- Article.vue -->
 <template>
     <div>
@@ -1604,7 +1604,7 @@ export default {
     // 传参时，只用在标签中添加对应的属性和值即可，也可以是对象{属性名: 类型}
 }
 </script>
-~~~
+```
 
 在使用自定义的属性时，可以使用`v-bind`指令传参，属性可以使用短横线命名法也可使用驼峰，与标签相同
 
@@ -1614,7 +1614,7 @@ export default {
 
 class：可以使用三元表达式，动态的为元素绑定 class 的类名（简写 `:class="{类名: 布尔值}"`）
 
-~~~vue
+```vue
 <!-- 通过点击按钮改变isItalic值，来确定class是否添加 -->
 <h3 class=".thin" :class="isItalic ? 'italic' : ''"></h3>
 <button @click="isItalic=!isItalic"></button>
@@ -1633,17 +1633,17 @@ data() {
 .italic {  <!-- 斜体 -->
 	font-style: italic;
 }
-~~~
+```
 
 以数组的语法绑定（绑定多个，但是会导致语法臃肿）
 
-~~~vue
+```vue
 <h3 class=".thin" :class="[isItalic ? 'italic' : '', isDelete ? 'delete' : '']"></h3>
-~~~
+```
 
 以对象的语法绑定
 
-~~~vue
+```vue
 <h3 class=".thin" :class="classObj"></h3>
 <button @click="classObj.italic = !classObj.italic"></button>
 <button @click="classObj.delete = !classObj.delete"></button>
@@ -1656,11 +1656,11 @@ data() {
 		}
 	}
 }
-~~~
+```
 
 以对象语法绑定内敛的style样式
 
-~~~vue
+```vue
 <!-- 如果有短横线，要么改为驼峰，要么加引号代表字符串 -->
 <div :style="{color: sctive, fontSize: fsize + 'px', 'background-color': bgcolor}">
 
@@ -1671,7 +1671,7 @@ data() {
 		bgcolor: 'pink'	
 	}
 }
-~~~
+```
 
 
 #### props 验证
@@ -1682,7 +1682,7 @@ data() {
 
 可以使用对象类型的 props
 
-~~~vue
+```vue
 <School name="jack" :age="18"></School>
 
 <script>
@@ -1693,7 +1693,7 @@ export default {
 	}
 }
 </script>
-~~~
+```
 
 |数据类型|说明|
 |:--:|:--:|
@@ -1708,7 +1708,7 @@ export default {
 
 除了直接指定校验类型之外，还可以指定多个可能的类型、必填项校验、属性默认值、自定义验证函数
 
-~~~vue
+```vue
 <script>
 export default {
 	props: {
@@ -1729,7 +1729,7 @@ export default {
 	}
 }
 </script>
-~~~
+```
 
 
 #### mixins混合
@@ -1820,7 +1820,7 @@ fullName() {
 计算属性的简写只在不需要修改计算属性（setter）时才会使用
 
 示例：
-~~~vue
+```vue
 <template>
   <div>
 	<!-- v-model 双向绑定 -->
@@ -1846,11 +1846,11 @@ export default {
   // 如果通过methods实现，那么表达式中必须是函数的调用，不能只写函数名
 };
 </script>
-~~~
+```
 
 相对于方法，计算属性会缓存计算的结果，只有依赖项发生变化时，才会重新进行运算。由此，计算属性的性能好（购物车的商品总个数和总计）
 
-~~~vue
+```vue
 <template>
   <div>
 	<!-- 对于同一个操作，方法会调用多次，而计算属性只调用一次 -->
@@ -1890,18 +1890,18 @@ export default {
 计算属性
 2 方法
 -->
-~~~
+```
 
 在计算属性中使用过滤器
 
-~~~js
+```js
 let a = 0
 this.fruitlist
   .filter(x => x.state)   // 过滤器
   .forEash(x => {
     a += x.price * x.count
   })
-~~~
+```
 
 示例
 ```html
@@ -2024,7 +2024,7 @@ export default {
 
 解绑一般在[生命周期钩子](#生命周期)中
 
-~~~vue
+```vue
 <!-- Counter.vue -->
 <script>
 export default {
@@ -2041,7 +2041,7 @@ export default {
 	}
 }
 </script>
-~~~
+```
 
 **监听自定义事件**
 
@@ -2049,7 +2049,7 @@ export default {
 
 对于上述的 count 组件，在父组件 `App.vue` 中监听事件
 
-~~~vue
+```vue
 <!-- App.vue -->
 <template>
 	<my-counter @count-changed="getCount"></my-counter>
@@ -2065,7 +2065,7 @@ export default {
   },
 }
 </script>
-~~~
+```
 
 通过自定义事件传递数据的方式，不需要使用 `props`，但是父组件都需要回调函数接收子组件传来的参数。但是相较于`props`，自定义事件不需要将回调传给子组件
 
@@ -2314,7 +2314,7 @@ export default {
 
 **组件双向绑定数据的案例**
 
-~~~vue
+```vue
 <!-- App.vue -->
 <template>
   <div>
@@ -2369,7 +2369,7 @@ export default {
   },
 };
 </script>
-~~~
+```
 
 
 ##### 任务列表案例
@@ -2382,25 +2382,25 @@ export default {
 
 使用 vite 初始化一个 SPA 项目
 
-~~~sh
+```sh
 npm init vite-app project_list
-~~~
+```
 
 安装依赖
 
-~~~sh
+```sh
 npm install
-~~~
+```
 
 安装 less 依赖
 
-~~~sh
+```sh
 npm i less -D
-~~~
+```
 
 项目的 src 目录结构
 
-~~~txt
+```txt
 src
 │  App.vue
 │  index.css
@@ -2420,11 +2420,11 @@ src
     └─todo-list
             TodoList.vue    // 列表组件
 
-~~~
+```
 
 重置 `css` 全局样式
 
-~~~css
+```css
 :root {
   font-size: 12px;
 }
@@ -2432,11 +2432,11 @@ src
 body {
   padding: 8px;
 }
-~~~
+```
 
 重置 `App.vue` 组件
 
-~~~vue
+```vue
  <template>
   <div>
     <h1> App 根组件</h1>
@@ -2460,7 +2460,7 @@ export default {
 <style lang="less" scoped>
   
 </style>
-~~~
+```
 
 **封装 todo-list 组件**
 
@@ -2468,7 +2468,7 @@ export default {
 
 在 `src/components/todo-list/` 目录下新建 `TodoList.vue` 组件
 
-~~~vue
+```vue
 <!-- TodoList.vue -->
 <template>
     <div>
@@ -2485,11 +2485,11 @@ export default {
 <style lang="less" scoped> 
 
 </style>
-~~~
+```
 
 在 `App.vue` 组件中注册 `TodoList.vue` 组件
 
-~~~vue
+```vue
 <!-- App.vue -->
 <script>
 import TodoList from './components/todo-list/TodoList.vue'
@@ -2499,13 +2499,13 @@ export default {
   },
 }
 </script>
-~~~
+```
 
 2、基于 bootstrap 渲染组件
 
 使用bootstrap的[列表](https://v4.bootcss.com/docs/components/list-group/)和[复选框](https://v4.bootcss.com/docs/components/forms/)具体参考 bootstrap v4 官方文档
 
-~~~vue
+```vue
 <!-- TodoList.vue -->
 <template>
   <ul class="list-group">
@@ -2521,11 +2521,11 @@ export default {
     </li>
   </ul>
 </template>
-~~~
+```
 
 3、声明 `props` 属性
 
-~~~vue
+```vue
 <!-- TodoList.vue -->
 <script>
 export default {
@@ -2538,22 +2538,22 @@ export default {
     }
 }
 </script>
-~~~
+```
 
 在 `App.vue` 组件中传参
 
-~~~vue
+```vue
 <!-- App.vue -->
 <template>
 <todo-list :list="todoList"></todo-list>
 </template>
-~~~
+```
 
 4、渲染 DOM 结构
 
 通过 `v-for` 渲染 DOM 结构
 
-~~~vue
+```vue
 <!-- TodoList.vue -->
 <template>
   <ul class="list-group">
@@ -2566,34 +2566,34 @@ export default {
       </div>
   </ul>
 </template>
-~~~
+```
 
 通过 `v-if` 和 `v-else` 选择渲染
 
-~~~html
+```html
 <!-- TodoList.vue -->
 <span class="badge badge-success badge-pill" v-if="item.done">完成</span>
 <span class="badge badge-warning badge-pill" v-else>未完成</span>
-~~~
+```
 
 通过 `v-model` 双向绑定
 
-~~~vue
+```vue
 <!-- TodoList.vue -->
 <input type="checkbox" class="custom-control-input" :id="item.id" v-model="item.done"/>
-~~~
+```
 
 
 通过 `v-bind` 动态绑定样式
 
-~~~vue
+```vue
 <!-- TodoList.vue -->
 <label class="custom-control-label" :class="{delete: item.done}" :for="item.id">
-~~~
+```
 
 样式
 
-~~~vue
+```vue
 <!-- TodoList.vue -->
 <style>
 .list-group {
@@ -2608,7 +2608,7 @@ export default {
   font-style: italic;
 }
 </style>
-~~~
+```
 
 **封装 todo-input 组件**
 
@@ -2616,7 +2616,7 @@ export default {
 
 在 `src/components/todo-input/` 目录下新建 `TodoInput.vue` 组件
 
-~~~vue
+```vue
 <!-- TodoInput.vue -->
 <template>
     <div>
@@ -2633,11 +2633,11 @@ export default {
 <style lang="less" scoped> 
 
 </style>
-~~~
+```
 
 在 `App.vue` 组件中注册 `TodoInput.vue` 组件
 
-~~~vue
+```vue
 <!-- App.vue -->
 <script>
 import TodoInput from './components/todo-input/TodoInput.vue'
@@ -2647,11 +2647,11 @@ export default {
   },
 }
 </script>
-~~~
+```
 
 2、基于 bootstrap 渲染组件
 
-~~~vue
+```vue
 <!-- TodoInput.vue -->
 <template>
 <!-- from 表单 -->
@@ -2673,7 +2673,7 @@ export default {
   <button type="submit" class="btn btn-primary mb-2">添加任务</button>
 </form>
 </template>
-~~~
+```
 
 3、通过自定义事件向外传递数据
 
@@ -2681,18 +2681,18 @@ export default {
 
 声明数据
 
-~~~vue
+```vue
 <!-- TodoInput.vue.vue -->
 data() {
 	return {
 	  task: '',
 	};
 },
-~~~
+```
 
 `v-model` 双向绑定数据
 
-~~~vue
+```vue
 <!-- TodoInput.vue -->
 
 <!-- 输入框进行v-model双向数据绑定 -->
@@ -2703,11 +2703,11 @@ data() {
   style="width: 356px"
   v-model.trim="task"    
 />
-~~~
+```
 
 阻止表单默认提交，声明自定义事件，并指定事件处理函数
 
-~~~vue
+```vue
 <!-- TodoInput.vue -->
 
 <!-- 阻止 from 表单默认提交，并指定处理函数 -->
@@ -2731,11 +2731,11 @@ export default {
 	}
 }
 </script>
-~~~
+```
 
 4、在 `App.vue` 组件中监听 `add` 自定义事件
 
-~~~vue
+```vue
 <!-- App.vue -->
 <template>
     <todo-input @add="addTask"></todo-input>
@@ -2757,7 +2757,7 @@ export default {
   }
 }
 </script>
-~~~
+```
 
 
 **TodoButton 组件**
@@ -2766,7 +2766,7 @@ export default {
 
 在 `src/components/todo-button/` 目录下新建 `TodoButton.vue` 组件
 
-~~~vue
+```vue
 <!-- TodoButton.vue.vue -->
 <template>
     <div>
@@ -2783,11 +2783,11 @@ export default {
 <style lang="less" scoped> 
 
 </style>
-~~~
+```
 
 在 `App.vue` 组件中注册 `TodoInput.vue` 组件
 
-~~~vue
+```vue
 <!-- App.vue -->
 <script>
 import TodoButton from './components/todo-button/TodoButton.vue'
@@ -2797,11 +2797,11 @@ export default {
   },
 }
 </script>
-~~~
+```
 
 2、基于 bootstrap 渲染组件
 
-~~~vue
+```vue
 <!-- TodoButton.vue.vue -->
 <template>
 <div class="button-container mt-3">
@@ -2819,13 +2819,13 @@ export default {
   text-align: center;
 }
 </style>
-~~~
+```
 
 3、通过 `props` 指定默认激活的按钮
 
 在props中声明，默认值为 0，0：全部、1：已完成、2：未完成
 
-~~~vue
+```vue
 <!-- TodoButton.vue.vue -->
 <script>
 export default {
@@ -2854,17 +2854,17 @@ export default {
 
 <!-- 通过属性绑定的形式传递给 TodoButton 组件 -->
 <todo-button :active="activeBtnIndex"></todo-button>
-~~~
+```
 
 给按钮动态绑定类名
 
-~~~html
+```html
 <!-- TodoButton.vue.vue -->
 
 <button type="button" class="btn" :class="active === 0 ? 'btn-primary' : 'btn-secondary'">全部</button>
 <button type="button" class="btn" :class="active === 1 ? 'btn-primary' : 'btn-secondary'">已完成</button>
 <button type="button" class="btn" :class="active === 2 ? 'btn-primary' : 'btn-secondary'">未完成</button>
-~~~
+```
 
 4、通过 `v-model` 更新激项的索引
 
@@ -2873,16 +2873,16 @@ export default {
 
 绑定按钮点击事件
 
-~~~vue
+```vue
 <!-- TodoButton.vue.vue -->
 <button type="button" class="btn" :class="active === 0 ? 'btn-primary' : 'btn-secondary'" @click="btnClick(0)">全部</button>
 <button type="button" class="btn" :class="active === 1 ? 'btn-primary' : 'btn-secondary'" @click="btnClick(1)">已完成</button>
 <button type="button" class="btn" :class="active === 2 ? 'btn-primary' : 'btn-secondary'" @click="btnClick(2)">未完成</button>
-~~~
+```
 
 声明自定义事件，用来更新父组件通过 `v-model` 指令传递过来的 `props` 数据
 
-~~~vue
+```vue
 <!-- TodoButton.vue.vue -->
 <script>
 export default {
@@ -2900,7 +2900,7 @@ export default {
   },
 };
 </script>
-~~~
+```
 
 通过计算属性动态更改列表
 
@@ -2908,7 +2908,7 @@ export default {
 
 在 `App.vue` 中使用计算属性
 
-~~~vue
+```vue
 <script>
 	computed: {
 		// 根据索引值，动态计算需要渲染的列表数据
@@ -2929,7 +2929,7 @@ export default {
 
 <!-- 更改传入的参数 -->
 <todo-list :list="taskList" class="mt-2"></todo-list>
-~~~
+```
 
 
 
@@ -2943,7 +2943,7 @@ watch 侦听器允许开发者监视数据的变化，从而针对数据的变�
 
 在 watch 节点下，定义自己的侦听器
 
-~~~vue
+```vue
 // MyWatch.vue
 
 <template>
@@ -2963,12 +2963,12 @@ export default {
   },
 };
 </script>
-~~~
+```
 
 ![](../../markdown_img/Pasted%20image%2020220618205838.png)
 * immediate选项
 	* 在默认情况下，初次渲染完成是不会调用侦听器的，如果需要初次就开始调用需要使用immediate属性
-	~~~js
+	```js
 	watch: {
 		username: {
 			// 会自动调用handler函数(固定写法)
@@ -2979,11 +2979,11 @@ export default {
 			immediate: true,  
 		}
 	}
-	~~~
+	```
 
 * deep选项
 	* 如果 watch 侦听的是对象，如果对象的属性值变化，watch是无法侦听到的
-	~~~js
+	```js
 	data() {
 		return {
 			info: {
@@ -3003,7 +3003,7 @@ export default {
 			deep: true
 		}
 	}
-	~~~
+	```
 
 如果对象中有多个属性，更改其他不必要的属性时，也会触发侦听器，所以需要单独特定的侦听对象中的某一元素
 
@@ -3024,7 +3024,7 @@ watch: {
 
 在输入框输入项查询的用户名，在控制台就会打印出该用户的对应信息
 
-~~~vue
+```vue
 <!-- MyWatch.vue -->
 <template>
   <div>
@@ -3076,7 +3076,7 @@ export default {
   },
 };
 </script>
-~~~
+```
 
 #### 组件的生命周期
 
@@ -3091,7 +3091,7 @@ vue 框架为组件内置了不同时刻的生命周期函数，会伴随组件�
 * 被成功渲染到页面上，会调用 mounted 函数
 * 被销毁之后，会调用 unmounted 函数
 
-~~~vue
+```vue
 <!-- App.vue -->
 <button @click="flag = !flag">隐藏组件</button>
 <my-test v-if="flag"></my-test>
@@ -3132,7 +3132,7 @@ unmounted
 created
 mounted
 -->
-~~~
+```
 
 **监听组件的更新**
 
@@ -3179,7 +3179,7 @@ mounted
 
 数据的接收方通过 `.on` 方法注册自定义事件，数据的发送方通过 `.emit` 方法触发自定义事件，并发送数据
 
-~~~js
+```js
 <!-- 数据接收方 Right.vue -->
 export default {
   name: "Right",
@@ -3221,7 +3221,7 @@ export default {
 import mitt from 'mitt';
 const bus = mitt();
 export default bus
-~~~
+```
 
 **后代关系组件之间的数据共享**
 
@@ -3229,7 +3229,7 @@ export default bus
 
 父节点的组件通过 `provide` 方法，对子孙组件共享数据
 
-~~~vue
+```vue
 <script>
 export default {
   data() {
@@ -3244,18 +3244,18 @@ export default {
   },
 }
 </script>
-~~~
+```
 
 子孙节点通过 `inject` 方法，接收父组件共享的数据
 
-~~~vue
+```vue
 <script>
 export default {
 	// 子孙组件使用 inject 接收共享的数据
 	inject: ['color']
 }
 </script>
-~~~
+```
 
 **父节点对外共享响应式数据**
 
@@ -3263,7 +3263,7 @@ export default {
 
 此时子孙节点如果要使用该数据，需要采用 `数据名.value` 的形式
 
-~~~js
+```js
 <!-- 父节点 -->
 import { computed } from 'vue';
 
@@ -3278,7 +3278,7 @@ export default {
 		}
 	}
 }
-~~~
+```
 
 **vuex**
 
@@ -3314,7 +3314,7 @@ vuex 是终极的组件之间的数据共享方案（多个组件依赖于同一
 
 ![](../../markdown_img/Pasted%20image%2020220619232808.png)
 
-~~~js
+```js
 // main.js
 // createApp 创建 vue 的单页面应用程序实例
 import { createApp } from 'vue'
@@ -3329,7 +3329,7 @@ const app = createApp(App)
 axios.defaults.baseURL = 'http://api.droliz.cn/api/'
 // 将 axios 挂载为 app 的全局自定义属性 后面的 http 名字自定义
 app.config.globalProperties.$http = axios
-~~~
+```
 
 
 #### vuex
@@ -3729,7 +3729,7 @@ getjuzi(context) {
 
 ref 是 vue 用来辅助开发者不依赖于 jQuery 来获取 DOM 元素或组件的引用（每个 vue 的组件实例都包含一个 `$refs` 对象，默认情况下指向空对象）
 
-~~~vue
+```vue
 <template>
   <div>
     <h1>App.vue</h1>
@@ -3747,7 +3747,7 @@ export default {
   },
 };
 </script>
-~~~
+```
 
 ![](../../markdown_img/Pasted%20image%2020220620011856.png)
 
@@ -3756,7 +3756,7 @@ export default {
 * 为 DOM 元素指定 ref 属性和名称
 * 通过 `this.$refs.名称` 的形式获取到 DOM 的引用
 
-~~~vue
+```vue
 <template>
   <div>
     <!-- 指定属性 ref 的值 -->
@@ -3776,13 +3776,13 @@ export default {
   },
 };
 </script>
-~~~
+```
 
 **使用 ref 引用组件实例**
 
 在使用组件A中使用组件B时，如果想在A中直接使用B中组件的实例对象，从而使用 `methods` 节点下的方法等
 
-~~~vue
+```vue
 <!-- 使用 ref 属性，为组件添加引用名称 -->
 <my-counter ref="counterRef"></my-counter>
 <button @click="getRef">获取组件实例对象</button>
@@ -3799,13 +3799,13 @@ export default {
 	}
 }
 </script>
-~~~
+```
 
 **$nextTick(cb)**
 
 当涉及到 DOM 元素的更新，组件是异步执行 DOM 更新操作的，所以可能会出现通过 ref 获取到的 DOM 对象为 `undefined` ，此时需要 `ref.$nextTick(callback)` 方法使需要的获取 DOM 对象的操作推迟到下次 DOM 更新之后
 
-~~~vue
+```vue
 <input type="text" v-if="inputVisible" ref="ipt">
 <button v-else @click="showInput">展示输入框</button>
 
@@ -3824,7 +3824,7 @@ export default {
 	}
 }
 </script>
-~~~
+```
 
 #### 动态组件
 
@@ -3833,7 +3833,7 @@ export default {
 * 通过 is 属性动态指定要渲染的组件的名称（不会触发 mounted 生命周期函数，只有 created）
 * `component is="要渲染的组件"></component>`
 
-~~~vue
+```vue
 <template>
   <div>
     <h1> App.vue</h1>
@@ -3863,17 +3863,17 @@ export default {
   },
 };
 </script>
-~~~
+```
 
 **使用 keep-alive 保持状态**
 
 当动态的渲染组件时，组件中的状态变化是不会默认保存的，需要使用 keep-alive 保持状态
 
-~~~vue
+```vue
 <keep-alive>
 	<component :is="comName"></component>
 </keep-alive>
-~~~
+```
 
 #### 插槽
 
@@ -3881,7 +3881,7 @@ export default {
 
 通过 `<slot>` 元素定义插槽（如果没有预留，用户传入的自定义内容都会被抛弃）
 
-~~~vue
+```vue
 <!-- Slot.vue -->
 <template>
   <div>
@@ -3903,23 +3903,23 @@ export default {
     </my-slot>
   </div>
 </template>
-~~~
+```
 
 **后备内容**
 
 封装组件时，可以为预留的 `slot` 插槽提供后备内容（默认内容），当用户没有提供自定义内容时，显示后备内容
 
-~~~vue
+```vue
 <slot>
 	<p>后备内容</p>
 </slot>
-~~~
+```
 
 **具名插槽**
 
 如果需要预留多个插槽节点，则需要为每个插槽指定具体的 `name` 名称（如果没指定name属性，默认name="default"），如果要特定的渲染，需要在 `<template>` 标签使用 `v-slot` 指令（可以用 `#`替代 `v-slot:` ，而且只能在`template`标签写`v-slot`指令），包裹对应的内，或者在需要的标签上添加属性`slot="name"`
 
-~~~vue
+```vue
 <!-- Slot.vue -->
 <template>
   <div>
@@ -3953,7 +3953,7 @@ export default {
 	<p>王勃</p>
   </template>
 </my-slot>
-~~~
+```
 
 **作用域插槽**
 
@@ -3961,7 +3961,7 @@ export default {
 
 作用域插槽的数据是由组件提供的，而数据的渲染结构是由使用的组件（父组件）来决定
 
-~~~vue
+```vue
 <!-- Slot.vue -->
 <!-- 使用属性绑定 -->
 <slot name="self" :info="info" :msg="msg"></slot>
@@ -3987,17 +3987,17 @@ export default {
 	<!-- scope = { "info": { "name": "MySlot", "age": 18 }, "msg": "abc"} -->
 	<p>作用域 {{scope.info.name}} {{scope.info.age}}</p>
 </template>
-~~~
+```
 
 解构作用域插槽的 prop
 
 当scope中有多个属性，可以直接指定需要的属性
 
-~~~vue
+```vue
 <template v-slot:self="{info, msg}">
 	<p>作用域 {{info.name}} {{msg}}</p>
 </template>
-~~~
+```
 
 使用场景：
 当需要渲染数据，此时为了让用户来决定渲染的样式、结构等，可以将此处预留作用域插槽，将数据以props的方式传递给用户，来实现用户对样式的自定义
@@ -4083,7 +4083,7 @@ new Vue({
 
 在组件的 `directives` 节点下声明私有自定义指令 `v-focus` ，在定义时不用加上 `v-` 使用时必须加上
 
-~~~vue
+```vue
 <input type="text" v-focus />
 
 <script>
@@ -4099,60 +4099,60 @@ export default {
 	} 
 }
 </script>
-~~~
+```
 
 **声明全局自定义指令**
 
 在 `main.js` 中 使用 `app.directive()` 声明
 
-~~~js
+```js
 // Vue对象实例 app
 app.directive('focus', {
     mounted(el) {
         el.focus();
     }
 })
-~~~
+```
 
 **updated 函数**
 
 与 `mounted` 不同的是，`mouned` 只在第一次插入的时候调用，而 `updated` 在每次 DOM 更新完调用
 
-~~~vue
+```vue
 focus: {
 	updated(el) {
 		el.focus();
 	}
 }
-~~~
+```
 
 同时，此时的 mouned 和 updated 逻辑相同，那么可以不接收对象，而是直接指定函数
 
-~~~js
+```js
 app.directive('focus', (el) => {
     el.focus();
 })
-~~~
+```
 
 **指定参数值**
 
 在绑定指令时，可以使用赋值符号为指令绑定具体的参数
 
-~~~vue
+```vue
 <!-- MyOrder.vue -->
 <p v-color="'blue'">MyOrder {{ count }}</p>
 <input type="text" v-focus v-color="'red'" />
 
-~~~
+```
 
 `binding.value` 就是指定的值
 
-~~~js
+```js
 <!-- main.js -->
 app.directive('color', (el, binding) => {
     el.style.color = binding.value
 })
-~~~
+```
 
 #### 过度与动画
 
@@ -4254,15 +4254,15 @@ vue-router 是 vue 官方给出的路由解决方案（插件）。只能结合 
 
 安装 `vue-router 4.x` 
 
-~~~sh
+```sh
 npm i vue-router -S   # vue3
 
 npm i vue-router@3 -S   # vue2
-~~~
+```
 
 使用 `<router-link>` 标签声明路由链接，并使用 `<router-view>` 标签声明路由占位符
 
-~~~vue
+```vue
 <!-- App.vue -->
 <template>
   <div>
@@ -4276,7 +4276,7 @@ npm i vue-router@3 -S   # vue2
     <router-view></router-view>
   </div>
 </template>
-~~~
+```
 
 每个路由组件都有两个属性`$route`（只读对象）和`$router`（只写对象），前者只存放自己的`router`对象，而第二个存放所有参与路由的组件。可以在组件中使用`thi.$route`获取组件路由的配置信息
 
@@ -4289,7 +4289,7 @@ npm i vue-router@3 -S   # vue2
 * 向外共享路由实例对象
 * 在 `main.js` 中导入并挂载路由模块
 
-~~~js
+```js
 // createRouter 创建旅游的实例对象  
 // createWebHashHistory 用于指定路由工作模式为 hash 模式  
 import {createRouter, createWebHashHistory} from "vue-router"  
@@ -4322,7 +4322,7 @@ import router from './components/router/router.js'
 const app = createApp(App)
 // 挂载路由模块
 app.use(router);
-~~~
+```
 
 vue2路由器使用示例
 
@@ -4404,14 +4404,14 @@ export default {
 
 通过路由规则的 `redirect` 属性，指定一个新的路由地址，设置路由的重定向
 
-~~~js
+```js
 const routes = [  
     {path: '/', redirect: '/home'},  
     {path: '/home', component: Home},  
     {path: '/movie', component: Movie},  
     {path: '/about', component: About}  
 ]
-~~~
+```
 
 **路由高亮**
 
@@ -4419,20 +4419,20 @@ const routes = [
 * 使用默认的高亮class类
 	被激活的路由链接，会默认引用在 `index.css` 中的一个 `router-link-active` 的类名
 
-	~~~css
+	```css
 	/* 自定义 */
 	.router-link-active {  
 	    background-color: red;  
 	    color: white;  
 	    font-weight: bold;  
 	}
-	~~~
+	```
 	
 * 自定义路由高亮的class类
 	在创建路由实例对象时，可以基于 `linkActiveClass` 属性，自定义路由连接被激活时应用的类名
 	也可以在`route-link`标签中使用`active-class`属性指定样式
 
-	~~~js
+	```js
 	const router = createRouter({  
 	    // 指定工作模式  
 	    history: createWebHashHistory(),  
@@ -4441,14 +4441,14 @@ const routes = [
 	    // 指定路由被激活时应用的样式的类名  
 	    linkActiveClass: 'router-active'  
 	});
-	~~~
+	```
 
 **嵌套路由**
 
 嵌套路由：通过路由实现组件的嵌套展示
 * 声明子路由连接和子路由占位符
 
-	~~~vue
+	```vue
 	<!-- 在about中声明两个子路由 -->
 	<template>  
 	  <div>  
@@ -4459,11 +4459,11 @@ const routes = [
 	    <router-view></router-view>  
 	  </div>  
 	</template>
-	~~~
+	```
 
 * 在父路由的规则中，通过 `children` 属性嵌套声明子路由规则
 
-	~~~js
+	```js
 	// router.js
 	const routes = [  
 	    {path: '/', redirect: '/home'},  
@@ -4475,11 +4475,11 @@ const routes = [
 	            {path: 'tab2', component: Tab2}  
 	        ]}  
 	]
-	~~~
+	```
 
 在嵌套路由中使用路由的重定向
 
-~~~js
+```js
 // 从 /about 重定向到 /about/tab1
 const routes = [    
     {  
@@ -4492,7 +4492,7 @@ const routes = [
         ]  
     }  
 ]
-~~~
+```
 
 ##### 路由参数
 
@@ -4561,13 +4561,13 @@ export default {
 
 通过 name 属性为路由规则定义名称（name必须保证唯一性），必须使用对象的形式来使用Name
 
-~~~js
+```js
 {  
     path: '/movie/:id',   
     name: "mov",  
     component: Movie,   
 {
-~~~
+```
 
 让路由连接动态绑定对象，对象中的 `name` 属性就是要指定跳转的路由（避免路径过长，可以只在对象中写一个name指定），同时对象中还可以使用 `params` 指定携带的参数（通过命名路由实现声明式导航）
 
@@ -4588,12 +4588,12 @@ export default {
 
 - 2、传参
 
-~~~vue
+```vue
 <router-link :to="{ 
 	name: 'mov', 
 	params: { id: 3 } 
 }">go to movie</router-link>
-~~~
+```
 
 在使用 `this.$router.push()` 方法时，可以使用对象的方式指定
 
@@ -4605,7 +4605,7 @@ this.$router.push({ name: 'mov', params: { id: 3 } });
 
 动态路由：将 Hash 地址中可变的部分定义为参数项，从而提高路由规则的复用性（使用 `:` 来定义路由参数项）
 
-~~~js
+```js
 // 路由链接
 <router-link to="/movie/1">电影</router-link>  
 <router-link to="/movie/2">电影</router-link>  
@@ -4621,7 +4621,7 @@ this.$router.push({ name: 'mov', params: { id: 3 } });
 { path: 'mocie/1', componenet: Movie }
 { path: 'mocie/2', componenet: Movie }
 { path: 'mocie/3', componenet: Movie }
-~~~
+```
 
 可以使用 `$route.params.参数名` 访问参数，也可以使用 `props` 接收路由参数
 
@@ -4700,7 +4700,7 @@ export default {
 如果想开启`replace`模式，需要在`router-link`标签中添加属性`replace或:replace="true"`即可
 
 
-~~~vue
+```vue
 <!-- 点击按钮，跳转到 Movie -->
 <script>  
 export default {  
@@ -4727,7 +4727,7 @@ export default {
   }  
 };
 </script>
-~~~
+```
 
 
 ##### 缓存路由组件
@@ -4767,7 +4767,7 @@ export default {
 
 初始化被调用，每次路由切换之前调用
 
-~~~js
+```js
 // router.js
 
 const router =  new VueRouter({  
@@ -4777,14 +4777,14 @@ const router =  new VueRouter({
 router.beforeEach(() => {  
     console.log("触发守卫方法")
 })
-~~~
+```
 
 守卫方法的三个形参
 * `to`：目标路由对象
 * `from`：当前导航正要离开的路由对象
 * `next`：函数，表示放行
 
-~~~js
+```js
 // router.js
 router.beforeEach((to, from, next) => {  
     console.log(to)  
@@ -4792,7 +4792,7 @@ router.beforeEach((to, from, next) => {
     // 如果声明了 next 必须调用 next 负责不允许访问任何组件  
     next();  // 允许访问任何组件  
 })
-~~~
+```
 
 `next` 函数的三种调用方式
 
@@ -4802,7 +4802,7 @@ router.beforeEach((to, from, next) => {
 
 结合 `token` 控制页面得访问权限
 
-~~~js
+```js
 router.beforeEach((to, from, next) => {  
     const token = localStorage.getItem('token')  // 读取 token    
     if (to.path === '/main' && !token) {  
@@ -4811,7 +4811,7 @@ router.beforeEach((to, from, next) => {
         next()    // 放行
     }  
 })
-~~~
+```
 
 在路由守卫中，可以将需要校验的路由的`meta`属性（路由元信息）上存放标识例如`meta: {isLogin: false}`，这样在校验时，可以直接通过唯一标识，来判断是否需要校验。`meta`属性是一个对象，用于存放自定义的属性
 
@@ -4888,7 +4888,7 @@ vue-cli （vue脚手架）是 vue 官方提供得、快速生成 vue 工程化�
 
 **安装和使用**
 
-~~~sh
+```sh
 # 全局安装
 npm i -g @vue/cli
 
@@ -4899,11 +4899,11 @@ vue --version
 # 管理员运行cmd
 set-ExecutionPolicy RemoteSigned
 Y   # 回车
-~~~
+```
 
 创建一个 vue-cli 项目
 
-~~~sh
+```sh
 vue create project_name   # 以命令行方式创建
 
 vue ui   # 以 ui 界面的形式创建
@@ -4912,10 +4912,10 @@ vue ui   # 以 ui 界面的形式创建
 npm run server
 # 打包项目（编译并压缩）
 npm run bulid
-~~~
+```
 
 
-~~~sh
+```sh
 # 如果在创建项目是终端报错
  ERROR  Failed to get response from Error: JAVA_HOME is incorrectly set.
 	Please update XXXX
@@ -4927,7 +4927,7 @@ npm run bulid
   "packageManager": "npm",
   "useTaobaoRegistry": false,
 }
-~~~
+```
 
 **vue-cli项目目录**
 
@@ -5009,13 +5009,13 @@ Element UI：是饿了么前端团队开源的一套 PC 端的 vue 组件库。�
 
 下载依赖（-plus是vue3的，-ui是vue2的）
 
-~~~sh
+```sh
 npm i element-plus -S
-~~~
+```
 
 注册 element-ui 为 vue 插件
 
-~~~js
+```js
 // main.js
 import { createApp } from 'vue'  
 import App from './App.vue'  
@@ -5027,7 +5027,7 @@ const app = createApp(App)
 // 注册为插件  
 app.use(ElementPlus)  
 app.mount('#app')
-~~~
+```
 
 按需引入需要借助第三方库`babel-plugin-component`
 
@@ -5081,7 +5081,7 @@ Vue.component(Select.name, Select);
 
 通过调用 `axios.interceptors.request.use(成功回调，失败回调)` 失败回调可省略。成功回调可以接收 config 对象，而且必须将 config 返回，否则请求无法发起
 
-~~~js
+```js
 // request.js
 import axios from 'axios'
 import store from '@/store'
@@ -5131,7 +5131,7 @@ export default (url, method, submitData) => {
         [method.toLowCase() === 'get' ? 'params' : 'data']: submitData
     })
 }
-~~~
+```
 
 #### proxy 跨域代理
 
@@ -5143,7 +5143,7 @@ export default (url, method, submitData) => {
 
 在项目根目录创建配置文件 `vue.config.js` 然后添加如下配置。重启项目即可
 
-~~~js
+```js
 // 项目根目录 vue.config.js
 module.exports = {
     devServer: {
@@ -5166,7 +5166,7 @@ axios.get('/api/url/nav/list').then(
       console.log(err.message);  
     }  
 )
-~~~
+```
 
 上述的配置只能配置一种代理
 
