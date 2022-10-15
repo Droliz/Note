@@ -16,7 +16,7 @@ ES6 模块化规范中定义：
 
 需要node版本高于14.15.1，在package.json根节点中添加`"type": "module"`，type默认值是CommonJS
 
-![[Pasted image 20220329173529.png]]
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220329173529.png)
 
 ### 默认导出导入
 
@@ -253,7 +253,7 @@ console.log("C");
 
 ### 执行过程
 
-![](../markdown_img/Pasted%20image%2020220613234824.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220613234824.png)
 
 * 同步任务由主线程按照顺序一次执行
 * 异步任务委托给宿主环境执行，然后将对应的**回调函数加入到任务队列**中
@@ -262,7 +262,7 @@ console.log("C");
 
 ### 宏任务与微任务
 
-![](../markdown_img/Pasted%20image%2020220614000102.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220614000102.png)
 
 * 在异步任务中划分两类
 	* 宏任务（macrotask）
@@ -277,7 +277,7 @@ console.log("C");
 
 #### 宏任务与微任务执行
 
-![](../markdown_img/Pasted%20image%2020220614001610.png)
+![](/markdown_img/Pasted%20image%2020220614001610.png)
 
 交替执行：每一个宏任务执行完，都会检查是否由微任务，如果有，先执行所有微任务，然后继续下一个宏任务
 

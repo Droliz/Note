@@ -4,6 +4,10 @@ zhihu-tags: c++, 数据结构
 zhihu-url: https://zhuanlan.zhihu.com/p/557137667
 ---
 
+# C++链表实现
+
+简单实现C++链表
+
 
 ```cpp
 #include<iostream>  

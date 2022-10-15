@@ -94,4 +94,3 @@ hdfs dfs -mv /test/profile /
 # hdfs dfs -cp path_1 path_2 	拷贝指定路径文件到指定路径
 hdfs dfs -cp /test/profile /
 ```
-

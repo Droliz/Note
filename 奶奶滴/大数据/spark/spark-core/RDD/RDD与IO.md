@@ -15,4 +15,4 @@ lines.flatMap(_.split(" ")) // map + flatten
 ```
 
 
-![](../../../../../markdown_img/Pasted%20image%2020221002002155.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020221002002155.png)

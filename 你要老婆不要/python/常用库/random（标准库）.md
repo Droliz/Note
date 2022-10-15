@@ -1,3 +1,7 @@
+# random库
+
+random库是用于生成随机数的
+
 ```python
 import random  
   

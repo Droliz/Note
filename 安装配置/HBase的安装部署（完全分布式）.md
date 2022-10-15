@@ -27,15 +27,19 @@ zhihu-url: https://zhuanlan.zhihu.com/p/496108543
 
 解压到`/opt/`目录下
 
-`tar -zxvf /home/apache-zookeeper-3.6.3-bin.tar.gz -C /opt/`
+```sh
+tar -zxvf /home/apache-zookeeper-3.6.3-bin.tar.gz -C /opt/
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220330101447.png)
 
 创建两个目录
 
-`mkdir /opt/apache-zookeeper-3.6.3-bin/data`
+```sh
+mkdir /opt/apache-zookeeper-3.6.3-bin/data
 
-`mkdir /opt/apache-zookeeper-3.6.3-bin/log`
+mkdir /opt/apache-zookeeper-3.6.3-bin/log
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220330101533.png)
 
@@ -47,10 +51,12 @@ zhihu-url: https://zhuanlan.zhihu.com/p/496108543
 
 ### 修改zoo.cfg
 
-`vi zoo.cfg`
+```sh
+vi zoo.cfg
 
-`dataDir=/opt/apache-zookeeper-3.6.3-bin/data`
-`dataLogDir=/opt/apache-zookeeper-3.6.3-bin/log`
+dataDir=/opt/apache-zookeeper-3.6.3-bin/data
+dataLogDir=/opt/apache-zookeeper-3.6.3-bin/log
+```
 
 如果没有这两个参数，自行添加，路径为之前创建的两个目录
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220330102403.png)
@@ -63,7 +69,7 @@ zhihu-url: https://zhuanlan.zhihu.com/p/496108543
 
 不同的数字对应不同的机器，每个的根据机器上的`/opt/apache-zookeeper-3.6.3-bin/data/myid`的文件进行不同的配置
 
-```
+```text
 server:1=master:2888:3888
 server:2=slave1:2888:3888
 server:3=slave2:2888:3888
@@ -197,13 +203,14 @@ server:3=slave2:2888:3888
 `cp /usr/local/hadoop/etc/hadoop/core-site.xml /opt/hbase-2.1.0/conf/`
 
 配置完成的 hbase 目录拷贝到其他各个节点的/opt/下
-```
+
+```sh
 scp -r /opt/hbase-2.1.0/ root@slave1:/opt/
 scp -r /opt/hbase-2.1.0/ root@slave2:/opt/
 ```
 
-在所有节点上的/etc/profile 文件中，完成如下的内容
-`vi /etc/profile`
+在所有节点上的/etc/profile 文件中，完成如下的内容`vi /etc/profile`
+
 ```
 export HBASE_HOME=/opt/hbase-2.1.0
 export PATH=${HBASE_HOME}/bin:$PATH
@@ -222,7 +229,3 @@ export PATH=${HBASE_HOME}/bin:$PATH
 ## 实例
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220330112203.png)
-
-
-
-

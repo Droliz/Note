@@ -34,15 +34,16 @@
     * 路径拼接
         * `path.join([http://www.droliz.cn.paths])`将多个路径片段拼接为完整的路径字符串
         * `file_path = path.join(__dirname, './Ajax.md')`
-            >`__dirname`表示当前文件所处的目录
 
-    * 获取路径中的文件名
-        * `path.basename(file_path[, ext])`获取路径中的文件名（ext：扩展名）
-        * `path.basename(path.join(__dirname, './Ajax.md'), '.md')`如果写了后缀，返回值就不会带后缀
+>`__dirname`表示当前文件所处的目录
 
-    * 获取路径文件扩展名
-        * `path.extname(file_path)`获取路径中文件的扩展名
-        * `path.extname(path.join(__dirname, './Ajax.md'))`
+* 获取路径中的文件名
+	* `path.basename(file_path[, ext])`获取路径中的文件名（ext：扩展名）
+	* `path.basename(path.join(__dirname, './Ajax.md'), '.md')`如果写了后缀，返回值就不会带后缀
+
+* 获取路径文件扩展名
+	* `path.extname(file_path)`获取路径中文件的扩展名
+	* `path.extname(path.join(__dirname, './Ajax.md'))`
 
 * ***http模块***
     * 由Node.js官方提供，用来**创建 web 服务器**的模块，通过`http.createSServer()`方法可以很方便地将一台普通的电脑，变成3一台Web服务器，从而对外提供Web资源服务
@@ -62,81 +63,81 @@
 
     * 创建最基本的web服务器
         * 导入模块、创建web服务器实例、为服务器绑定 request 事件，监听客户端的请求、启动服务器
-        
-        ```js
-        // 导入 http 模块
-        const http = require('http');
-        // 创建服务器实例对象
-        let server = http.createServer();
-        // 监听客户端请求       req:请求对象  res:响应对象
-        server.on('request', function (req, res) {
-            // 设置响应头
-            res.writeHead(200, {
-                'Content-Type': 'text/html;charset=utf-8'
-            });
-            // 设置响应内容
-            var str = `你的url是: ${req.url}`
-            // 添加响应内容
-            res.write(str);
-            // 发送响应内容
-            res.end();
-        });
-        // 启动服务器
-        server.listen(9909, () => {
-            console.log('服务器启动成功，端口号：9909');
-        });   
 
-        // 关闭服务器 (在终端中按 Ctrl + c)
-        // server.close();
-        ```
+```js
+// 导入 http 模块
+const http = require('http');
+// 创建服务器实例对象
+let server = http.createServer();
+// 监听客户端请求       req:请求对象  res:响应对象
+server.on('request', function (req, res) {
+	// 设置响应头
+	res.writeHead(200, {
+		'Content-Type': 'text/html;charset=utf-8'
+	});
+	// 设置响应内容
+	var str = `你的url是: ${req.url}`
+	// 添加响应内容
+	res.write(str);
+	// 发送响应内容
+	res.end();
+});
+// 启动服务器
+server.listen(9909, () => {
+	console.log('服务器启动成功，端口号：9909');
+});   
 
-    * 根据不同的URL响应不同的内容
-        
-        * 获取请求的url、设置默认的响应内容为404 Nor Found、根据用户请求的url响应不同的内容
+// 关闭服务器 (在终端中按 Ctrl + c)
+// server.close();
+```
 
-        ```js
-        // 导入 http 模块
-        const http = require('http');
-        // 创建服务器实例对象
-        const server = http.createServer();
-        // 监听客户端请求       req:请求对象  res:响应对象
-        server.on('request', function (req, res) {
-            // 设置响应头
-            res.writeHead(200, {
-                'Content-Type': 'text/html;charset=utf-8'
-            });
-            // 设置默认响应内容为 404
-            let result = '404';
-            // 判断请求路径
-            switch (req.url) {
-                case '/':
-                case '/index.html':
-                    result = '首页';
-                    break;
-                case '/about':
-                    result = '关于我们';
-                    break;
-                case '/news':
-                    result = '新闻';
-                    break;
-                case '/contact':
-                    result = '联系我们';
-                    break;
-                default:
-                    result = '404';
-                    break;
-            }
-            // 响应内容
-            res.end(result);
-        });
-        // 启动服务器       es6语法
-        server.listen(9909, () => {
-            console.log('服务器启动成功，端口号：9909');
-        });   
+* 根据不同的URL响应不同的内容
+	
+	* 获取请求的url、设置默认的响应内容为404 Nor Found、根据用户请求的url响应不同的内容
 
-        // // 关闭服务器 (终端 Ctrl + C )
-        // server.close();
-        ```
+```js
+// 导入 http 模块
+const http = require('http');
+// 创建服务器实例对象
+const server = http.createServer();
+// 监听客户端请求       req:请求对象  res:响应对象
+server.on('request', function (req, res) {
+	// 设置响应头
+	res.writeHead(200, {
+		'Content-Type': 'text/html;charset=utf-8'
+	});
+	// 设置默认响应内容为 404
+	let result = '404';
+	// 判断请求路径
+	switch (req.url) {
+		case '/':
+		case '/index.html':
+			result = '首页';
+			break;
+		case '/about':
+			result = '关于我们';
+			break;
+		case '/news':
+			result = '新闻';
+			break;
+		case '/contact':
+			result = '联系我们';
+			break;
+		default:
+			result = '404';
+			break;
+	}
+	// 响应内容
+	res.end(result);
+});
+// 启动服务器       es6语法
+server.listen(9909, () => {
+	console.log('服务器启动成功，端口号：9909');
+});   
+
+// // 关闭服务器 (终端 Ctrl + C )
+// server.close();
+```
 
 ### 模块化
 
@@ -164,29 +165,27 @@
                 * `module.exports.属性名 = 值/方法`示例`module.exports.sayHello = () => {console.log('Hello!')}`
             * node.js中提供了`exports`对象，默认情况下和`module.exports`指向同一个对象
 
-            ```js
-            // 一开始exports和module.exports都指向存储username的对象
-            exports.username = 'zs'
-            // 为module.exports赋值新对象，但exports还是指向原来的对象
-            module.exports = {
-                gender: '男',
-                age: 22
-            }
-            // 用require导入包时，得到的一定是module.exports指向的对象
+```js
+// 一开始exports和module.exports都指向存储username的对象
+exports.username = 'zs'
+// 为module.exports赋值新对象，但exports还是指向原来的对象
+module.exports = {
+	gender: '男',
+	age: 22
+}
+// 用require导入包时，得到的一定是module.exports指向的对象
 
-            // 相比如果是添加属性，而不是赋值对象
-            module.exports.age = 20
-            // 那么得到的值既包含了exports添加的也包含了module.exports添加的属性
-            ```
+// 相比如果是添加属性，而不是赋值对象
+module.exports.age = 20
+// 那么得到的值既包含了exports添加的也包含了module.exports添加的属性
+```
 
-        >导入结果永远以 `module.exports` 指向的对象为准
+>导入结果永远以 `module.exports` 指向的对象为准
 
-    * Node.js中的模块规范
-        * Node.js遵循了CommonJS模块化规范，规定了模块的特性和各模块之间如何相互依赖
-
-        * CommonJS规定
-
-            * 每个模块内部，`module`变量代表当前模块，`module`变量是一个属性，它的`exports`属性（module.exports）是对外接口，加载模块其实就是加载模块的`module.exports`属性(require()方法用于加载模块)
+* Node.js中的模块规范
+	* Node.js遵循了CommonJS模块化规范，规定了模块的特性和各模块之间如何相互依赖
+	* CommonJS规定
+		* 每个模块内部，`module`变量代表当前模块，`module`变量是一个属性，它的`exports`属性（module.exports）是对外接口，加载模块其实就是加载模块的`module.exports`属性(require()方法用于加载模块)
 
 * ***npm与包***
 
@@ -252,7 +251,7 @@
             * 如果没有则加载index.js
             * 如果还没有在终端报错 `Error:Cannot find module 'xxx'`
 
-    
+
 ### Express
 
 * ***初识Express***
@@ -266,43 +265,44 @@
         * API 接口服务器：专门对外提供API接口的服务器
 
     * 监听请求
-        
-        ```js
-        // 导入库
-        const express = require('express')
-        // 创建实例
-        const app = express();
 
-        // 监听请求
-        // GET
-        app.get('URL', function (res, req) {
-            // res的send方法可以向客户端发送数据
-            // 向客户端发生 JSON对象
-            res.send({name: 'zs', age: 20, gender: '男'})
-        })
+```js
+// 导入库
+const express = require('express')
+// 创建实例
+const app = express();
 
-        // POST
-        app.post('URL', function (res, req) {
-            // 向客户端发送文本内容
-            res.send('请求成功')
-        })
+// 监听请求
+// GET
+app.get('URL', function (res, req) {
+	// res的send方法可以向客户端发送数据
+	// 向客户端发生 JSON对象
+	res.send({name: 'zs', age: 20, gender: '男'})
+})
 
-        // 开启服务器
-        app.listen(端口号, callback)
+// POST
+app.post('URL', function (res, req) {
+	// 向客户端发送文本内容
+	res.send('请求成功')
+})
 
-        // res.query对象存储url中查询字符串的参数，默认是空对象
-        // res.query = {name: 'zs', age: 20, gender: '男'}
-        // res.params通过:动态匹配URL的参数
-        // URL = http://www.droliz.cn.  :name
-        // res.params = {name: 'zs'}
-        ```
+// 开启服务器
+app.listen(端口号, callback)
 
-    * 托管静态资源
-        * `express.static(fileName)`创建一个静态资源服务器 
-        ```
-        app.use([/路径前缀], express.static(对外开放的静态资源目录))
-        默认不带前缀，如果写了前缀参数，那么访问必须带前缀
-        ```
+// res.query对象存储url中查询字符串的参数，默认是空对象
+// res.query = {name: 'zs', age: 20, gender: '男'}
+// res.params通过:动态匹配URL的参数
+// URL = http://www.droliz.cn.  :name
+// res.params = {name: 'zs'}
+```
+
+* 托管静态资源
+	* `express.static(fileName)`创建一个静态资源服务器 
+
+```js
+app.use([/路径前缀], express.static(对外开放的静态资源目录))
+默认不带前缀，如果写了前缀参数，那么访问必须带前缀
+```
 
 * ***nodemon***
 
@@ -316,46 +316,47 @@
 
     * app.METHOD(PATH, HANDLERR) 
 
-        ```js
-        app.get('/', function (req, res) {
-            res.send('GET')
-        })
+```js
+app.get('/', function (req, res) {
+	res.send('GET')
+})
 
-        app.post('/', function (req, res) {
-            res.send('POST')
-        })
-        ```
+app.post('/', function (req, res) {
+	res.send('POST')
+})
+```
 
-    * 客户端发送的请求会先经过路由的匹配，会**按照路由的顺序**进行匹配
+* 客户端发送的请求会先经过路由的匹配，会**按照路由的顺序**进行匹配
 
-    * 路由模块化
-        * 自定义一个路由的js文件，调用`express.Router`创建路由对象，向路由对象上挂载具体的路由，`module.exports`向外共享路由对象，使用`app.use()`注册路由模块
+* 路由模块化
+	* 自定义一个路由的js文件，调用`express.Router`创建路由对象，向路由对象上挂载具体的路由，`module.exports`向外共享路由对象，使用`app.use()`注册路由模块
 
-        ```js
-        // 路由模块.js
-        // 1、导入模块
-        const express = require('express')
-        // 2、创建路由对象
-        const router = express.Router()
-        // 3、挂载具体的路由
-        router.get('/path/list', (req, res) => {
-            res.send('GET')
-        })
-        router.post('/path/list', (req, res) => {
-            res.send('POST')
-        })
-        // 4、向外共享
-        module.exports = router
+```js
+// 路由模块.js
+// 1、导入模块
+const express = require('express')
+// 2、创建路由对象
+const router = express.Router()
+// 3、挂载具体的路由
+router.get('/path/list', (req, res) => {
+	res.send('GET')
+})
+router.post('/path/list', (req, res) => {
+	res.send('POST')
+})
+// 4、向外共享
+module.exports = router
 
-        // js
-        // 导入路由模块
-        const userRouter = require('路由模块路径')
-        // 使用app.use()注册路由模块
-        app.use('/api', userRouter)
+// js
+// 导入路由模块
+const userRouter = require('路由模块路径')
+// 使用app.use()注册路由模块
+app.use('/api', userRouter)
 
-        app.listen(3000, () =>{})
-        ```
-    >`app.use()`用来注册**全局中间件**
+app.listen(3000, () =>{})
+```
+
+>`app.use()`用来注册**全局中间件**
 
 
 * ***Express中间件***
@@ -367,237 +368,239 @@
 
     *  next函数：表示把流程关系转交给下一个中间件或路由
 
-        ```
-        // 定义一个中间件函数
-        const mw = function(req, res, next) {
-            console.log('中间件函数');
-            // 业务逻辑处理完毕之后必须调用next函数
-            // 调用next表示将流转关系交给下一个路由或中间件
-            next();
-        }    
-        ```
-        
-    * 全局生效中间件：客户端发起的**任何请求**，到达服务器之后，都会触发的中间件
-    * 局部中间件：不适用app.use定义的中间件
+```js
+// 定义一个中间件函数
+const mw = function(req, res, next) {
+console.log('中间件函数');
+// 业务逻辑处理完毕之后必须调用next函数
+// 调用next表示将流转关系交给下一个路由或中间件
+next();
+}    
+```
 
-    * 中间件的作用
-        * 多个中间件可以**共享同一份的req和res**，所以上游的中间件中统一为req或res添加自定义属性和方法供下游使用
+* 全局生效中间件：客户端发起的**任何请求**，到达服务器之后，都会触发的中间件
+* 局部中间件：不适用app.use定义的中间件
 
-        ```js
-        // 导入
-        const express = require('express');
-        const app = express();
+* 中间件的作用
+	* 多个中间件可以**共享同一份的req和res**，所以上游的中间件中统一为req或res添加自定义属性和方法供下游使用
 
-        // 全局中间件
-        app.use((req, res, next) => {
-            console.log('全局中间件');
-            // req(res).属性名(方法名) = 值   相当于全局变量，后面的中间件都可以使用
-            next();
-        });
+```js
+// 导入
+const express = require('express');
+const app = express();
 
-        // 局部中间件（可以写多个用中括号包裹，执行从左往右）,只在当前路由生效，先给中间件处理，再给路由处理
-        app.get('/', (req, res, next) => {
-            console.log('局部生效的中间件')
-            next();     // 如果不写，无法将流程转换到后面的路由或中间件
-        }, (req, res) => {
-            console.log('路由')
-        })
+// 全局中间件
+app.use((req, res, next) => {
+	console.log('全局中间件');
+	// req(res).属性名(方法名) = 值   相当于全局变量，后面的中间件都可以使用
+	next();
+});
 
-        // 定义一个路由
-        app.get('/', (req, res) => {
-            console.log('路由处理函数');
-            res.send('Hello World');
-        });
+// 局部中间件（可以写多个用中括号包裹，执行从左往右）,只在当前路由生效，先给中间件处理，再给路由处理
+app.get('/', (req, res, next) => {
+	console.log('局部生效的中间件')
+	next();     // 如果不写，无法将流程转换到后面的路由或中间件
+}, (req, res) => {
+	console.log('路由')
+})
 
-        // 开启服务
-        app.listen(3000, () => {
-            console.log('服务已经开启 http://localhost:3000');
-        }
-        );
+// 定义一个路由
+app.get('/', (req, res) => {
+	console.log('路由处理函数');
+	res.send('Hello World');
+});
 
-        // 终端
-        // 全局中间件
-        // 局部生效的中间件  
-        // 路由
-        // 路由处理函数
-        ```
+// 开启服务
+app.listen(3000, () => {
+	console.log('服务已经开启 http://localhost:3000');
+}
+);
 
-    * 中间件分类
-        * 应用级别中间件
-            * 通过`app.use()/get()/post()`绑定到app实例上的中间件，叫做应用级中间件
-        * 路由级别中间件
-            * 绑定到`express.Router()`实例上的中间件
-        * 错误级别中间件
-            * 专门用来捕获项目中发生的异常错误，防止项目因为异常而崩溃`(err, req, res, next) => {}`，必须注册在所有路由之后（捕获前面所有错误）
-        * Express 内置中间件
-            * `express.static`快速托管静态资源（无兼容性）
-            * `express.json`解析JSON格式的请求数据体（仅在4.16.0之后）
-            * `express.urlencoded`解析URL-encoded格式的请求体数据（仅在4.16.0之后）
+// 终端
+// 全局中间件
+// 局部生效的中间件  
+// 路由
+// 路由处理函数
+```
 
-            ```
-            // 配置解析 application/json 格式的数据的内置中间件
-            app.use(express.json());
-            // 配置解析 application/x-www-form-urlencoded 格式数据的额内置中间件
-            app.use(express.urlencoded({extended: false}));
-            ```
+* 中间件分类
+* 应用级别中间件
+	* 通过`app.use()/get()/post()`绑定到app实例上的中间件，叫做应用级中间件
+* 路由级别中间件
+	* 绑定到`express.Router()`实例上的中间件
+* 错误级别中间件
+	* 专门用来捕获项目中发生的异常错误，防止项目因为异常而崩溃`(err, req, res, next) => {}`，必须注册在所有路由之后（捕获前面所有错误）
+* Express 内置中间件
+	* `express.static`快速托管静态资源（无兼容性）
+	* `express.json`解析JSON格式的请求数据体（仅在4.16.0之后）
+	* `express.urlencoded`解析URL-encoded格式的请求体数据（仅在4.16.0之后）
 
-            >当表单发送请求，如果不配置解析表单数据的中间件，req.body(请求体)默认为undefined
-            
-        * 第三发放中间件
-            * `npm install`下载、再导入由第三方开发的
-            * `express.urlencoded`就是基于第三方`body-parser`开发的
+```js
+// 配置解析 application/json 格式的数据的内置中间件
+app.use(express.json());
+// 配置解析 application/x-www-form-urlencoded 格式数据的额内置中间件
+app.use(express.urlencoded({extended: false}));
+```
 
-    * 自定义中间件
-        
-        ```javascript
-        const express = require('express');
-        const ps = require('querystring');
-        const app = express();
-        
-        // 自定义模拟urlencoded的中间件
-        app.use((req, res, next) => {
-            // 判断请求头是否为application/x-www-form-urlencoded
-            if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
-                // 解析请求体
-                let body = '';
-                // 监听data事件 （每次接收到数据都触发）
-                req.on('data', (chunk) => {
-                    // 将数据拼接到body中
-                    body += chunk;
-                });
-                // 监听end事件 （接收完毕触发） 
-                req.on('end', () => {
-                    // 使用querystring模块提供的parse方法将请求体转换为对象
-                    // 挂载为req.body，供后续中间件使用
-                    req.body = ps.parse(body);
-                    next();
-                });
-            } else {
-                next();
-            }
-        });
-        ```
+>当表单发送请求，如果不配置解析表单数据的中间件，req.body(请求体)默认为undefined
+	
+* 第三发放中间件
+	* `npm install`下载、再导入由第三方开发的
+	* `express.urlencoded`就是基于第三方`body-parser`开发的
 
-        >`req.params`和`req.query`用在get请求中，`req.body`用在post请求中
+* 自定义中间件
+
+```javascript
+const express = require('express');
+const ps = require('querystring');
+const app = express();
+
+// 自定义模拟urlencoded的中间件
+app.use((req, res, next) => {
+	// 判断请求头是否为application/x-www-form-urlencoded
+	if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
+		// 解析请求体
+		let body = '';
+		// 监听data事件 （每次接收到数据都触发）
+		req.on('data', (chunk) => {
+			// 将数据拼接到body中
+			body += chunk;
+		});
+		// 监听end事件 （接收完毕触发） 
+		req.on('end', () => {
+			// 使用querystring模块提供的parse方法将请求体转换为对象
+			// 挂载为req.body，供后续中间件使用
+			req.body = ps.parse(body);
+			next();
+		});
+	} else {
+		next();
+	}
+});
+```
+
+>`req.params`和`req.query`用在get请求中，`req.body`用在post请求中
 
 * ***Express编写接口***
 
-    * 编写接口
+编写接口
 
-        ```javascript
-        // 01.js(api)
-        
-        const express = require('express');
-        const router = express.Router();
+```javascript
+// 01.js(api)
 
-        router.get('/get', (req, res) => {
-            // 通过 req.query (get) 获取请求参数 (在post中用body)
-            const query = req.query;
-            // 通过 res.send 发送响应
-            res.send({
-                code: 200,
-                msg: 'GET请求成功',
-                data: query
-            });
-        });
+const express = require('express');
+const router = express.Router();
 
-        router.post('/post', (req, res) => {
+router.get('/get', (req, res) => {
+	// 通过 req.query (get) 获取请求参数 (在post中用body)
+	const query = req.query;
+	// 通过 res.send 发送响应
+	res.send({
+		code: 200,
+		msg: 'GET请求成功',
+		data: query
+	});
+});
 
-            const body = req.body;
-            // 通过 res.send 发送响应
-            res.send({
-                code: 200,
-                msg: 'POST请求成功',
-                data: body
-            });
-        })
+router.post('/post', (req, res) => {
 
-        // 导出路由
-        module.exports = router;
+	const body = req.body;
+	// 通过 res.send 发送响应
+	res.send({
+		code: 200,
+		msg: 'POST请求成功',
+		data: body
+	});
+})
+
+// 导出路由
+module.exports = router;
 
 
-        // main.js
-        const cors = require('cors');
-        const express = require('express');
-        const app = express();
-        const api = require('./01.js');
+// main.js
+const cors = require('cors');
+const express = require('express');
+const app = express();
+const api = require('./01.js');
 
-        // 配置解析表单数据的中间件(post请求)   
-        app.use(express.urlencoded({ extended: false }));
+// 配置解析表单数据的中间件(post请求)   
+app.use(express.urlencoded({ extended: false }));
 
-        // 解决跨域
-        app.use(cors());
+// 解决跨域
+app.use(cors());
 
-        app.use('/api', api);
+app.use('/api', api);
 
-        app.listen(3000, () => {
-            console.log('server is running at port http://localhost:3000');
-        });
+app.listen(3000, () => {
+	console.log('server is running at port http://localhost:3000');
+});
 
-        // post请求必须配置解析表单数据的中间件
-        ```
-            
-    * 跨域问题
-        * 由于主要url的协议、域名、接口任意一项不相同，都有可能出现跨域的问题
-        * 解决跨域问题的两种方案
-            * JSONP（只支持GET）
-            * CORS（只支持XMLHTTPRequest Level2 浏览器，IE10+、chrome4+、FireFox3.5+）
-                * CORS：（Cross-Origin Resource Sharing，跨域资源共享）由一系列**HTTP响应头**组成，决定了浏览器是否会阻止前端JS代码跨域获取资源
-                * CORS是express的第三方中间件在路由之前通过`use`注册`cors()`即可
+// post请求必须配置解析表单数据的中间件
+```
 
-        * CORS 响应头：
-            * Access-Control-Allow-Origin
-                * 响应头部可以携带一个 `Access-Control-Allow-Origin` 字段
-                    * `Access-Control-Allow-Origin: <origin> | *`
-                    * origin参数指定**允许访问该资源的外域URL**默认为通配符`*`表示所有的
-                    * `res.setHeader('Access-Control-Allow-Origin', 'https://www.Droliz.com')`只允许来自`http://www.droliz.com`的请求
+ 跨域问题
+ 
+* 由于主要url的协议、域名、接口任意一项不相同，都有可能出现跨域的问题
+* 解决跨域问题的两种方案
+	* JSONP（只支持GET）
+	* CORS（只支持XMLHTTPRequest Level2 浏览器，IE10+、chrome4+、FireFox3.5+）
+		* CORS：（Cross-Origin Resource Sharing，跨域资源共享）由一系列**HTTP响应头**组成，决定了浏览器是否会阻止前端JS代码跨域获取资源
+		* CORS是express的第三方中间件在路由之前通过`use`注册`cors()`即可
 
-            * Access-Control-Allow-Headers
-                * 默认情况下只发送以下九个请求头，如果发送了额外的请求头信息，则需要在服务器端，通过Access-Control-Allow-Headers声明
-                    * `Accept`、`Accept-Language`、`Content-Language`、`DPR`、`Downlink`、`Save-Data`、`Viewport-Width`、`Width`、`Content-Type`（值仅限于`text/plain`、`multipart/form-data`、`application/x-www-form-urlencoded`三者之一）
-                * `res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header')`
+* CORS 响应头：
+	* Access-Control-Allow-Origin
+		* 响应头部可以携带一个 `Access-Control-Allow-Origin` 字段
+			* `Access-Control-Allow-Origin: <origin> | *`
+			* origin参数指定**允许访问该资源的外域URL**默认为通配符`*`表示所有的
+			* `res.setHeader('Access-Control-Allow-Origin', 'https://www.Droliz.com')`只允许来自`http://www.droliz.com`的请求
 
-            * Access-Control-Allow-Methods
-                * 默认cors仅支持 GET、POST、HEAD请求，可以通过Access-Control-Allow-Methods来指明请求所允许的HTTP方法
+	* Access-Control-Allow-Headers
+		* 默认情况下只发送以下九个请求头，如果发送了额外的请求头信息，则需要在服务器端，通过Access-Control-Allow-Headers声明
+			* `Accept`、`Accept-Language`、`Content-Language`、`DPR`、`Downlink`、`Save-Data`、`Viewport-Width`、`Width`、`Content-Type`（值仅限于`text/plain`、`multipart/form-data`、`application/x-www-form-urlencoded`三者之一）
+		* `res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header')`
 
-        * CORS请求根据**请求方式和请求头**的不同，分为两大类
-            * 简单请求
-                * 请求方式是`GET、POST、HEAD`三者之一，请求头部是默认请求（都满足）
-            * 预检请求
-                * 除去默认的请求方式之外的、请求头包含自定义头部字段、向服务器发送了`application/json`格式的数据（任意一个）
-                >浏览器会先发送OPTION请求进行预检（预检请求），如果服务器允许该实际请求，并成功的响应了预检请求，才会发送真正的请求（携带真实数据）
+	* Access-Control-Allow-Methods
+		* 默认cors仅支持 GET、POST、HEAD请求，可以通过Access-Control-Allow-Methods来指明请求所允许的HTTP方法
 
-    * JSONP接口
-        * JSONP不属于真正的Ajax请求，因为并没有使用XMLHttpRequest对象
-        * JSONP仅支持GET请求，不支持POST、PUT、DELETE等请求
+* CORS请求根据**请求方式和请求头**的不同，分为两大类
+	* 简单请求
+		* 请求方式是`GET、POST、HEAD`三者之一，请求头部是默认请求（都满足）
+	* 预检请求
+		* 除去默认的请求方式之外的、请求头包含自定义头部字段、向服务器发送了`application/json`格式的数据（任意一个）
 
-        * 如果项目配置了CORS跨域资源共享，为了防止冲突，必须在CORS之前声明JSONP接口，否则JSONP接口会被处理成开启了CORS的接口
+>浏览器会先发送OPTION请求进行预检（预检请求），如果服务器允许该实际请求，并成功的响应了预检请求，才会发送真正的请求（携带真实数据）
 
-            ```
-            // 优先创建JSONP接口
-            app.get('/api/JSONP', (req, res) => { })
-            // 再配置CORS中间件（后面所有的接口都会被处理成CORS接口）
-            app.use(cors())
-            // 此接口在CORS之后，故开启了CORS
-            app.get('/api/get', (req, res) => { })
-            ```
+* JSONP接口
+	* JSONP不属于真正的Ajax请求，因为并没有使用XMLHttpRequest对象
+	* JSONP仅支持GET请求，不支持POST、PUT、DELETE等请求
 
-        * JSONP接口的实现
-            * 获取客户端发送的回调函数的名字、得到要通过JSONP形式发送给客户端的数据、结合两个拼接出一个函数调用的字符串、将字符串响应给`<script>`标签进行解析
+	* 如果项目配置了CORS跨域资源共享，为了防止冲突，必须在CORS之前声明JSONP接口，否则JSONP接口会被处理成开启了CORS的接口
 
-            ```javascript
-            // JSONP
-            app.get('/api/jsonp', (req, res) => {
-                // 获取客户端发送的回调函数名字
-                const funcName = req.query.callback;
-                // 得到通过 JSONP 形式发送给客户端的数据
-                const data = { name: 'zs', age: 20 }
-                // 拼接函数调用的字符串
-                const scriptStr = `${funcName}(${JSON.stringify(data)})`;
-                // 发送响应给客户端的 <script> 标签解析
-                res.send(scriptStr);
-            });
-            ```
+```js
+// 优先创建JSONP接口
+app.get('/api/JSONP', (req, res) => { })
+// 再配置CORS中间件（后面所有的接口都会被处理成CORS接口）
+app.use(cors())
+// 此接口在CORS之后，故开启了CORS
+app.get('/api/get', (req, res) => { })
+```
+
+* JSONP接口的实现
+	* 获取客户端发送的回调函数的名字、得到要通过JSONP形式发送给客户端的数据、结合两个拼接出一个函数调用的字符串、将字符串响应给`<script>`标签进行解析
+
+```javascript
+// JSONP
+app.get('/api/jsonp', (req, res) => {
+	// 获取客户端发送的回调函数名字
+	const funcName = req.query.callback;
+	// 得到通过 JSONP 形式发送给客户端的数据
+	const data = { name: 'zs', age: 20 }
+	// 拼接函数调用的字符串
+	const scriptStr = `${funcName}(${JSON.stringify(data)})`;
+	// 发送响应给客户端的 <script> 标签解析
+	res.send(scriptStr);
+});
+```
 
 
 ## 拓展
@@ -635,5 +638,3 @@ app.all('*', function (req, res, next) {
 	next();
 });
 ```
-
-

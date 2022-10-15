@@ -336,6 +336,3 @@ public class main {
 ## 结果
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220417182612.png)
-
-
-

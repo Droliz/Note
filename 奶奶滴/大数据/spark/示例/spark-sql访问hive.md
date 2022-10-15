@@ -54,11 +54,11 @@ Time taken: 0.137 seconds, Fetched: 5 row(s)
 
 在hive中查看表
 
-![](../../../../markdown_img/Pasted%20image%2020221010152859.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020221010152859.png)
 
 在spark中查看表
 
-![](../../../../markdown_img/Pasted%20image%2020221010152845.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020221010152845.png)
 
 至此，spark-sql中访问的hive 就是外部的hive
 
@@ -68,4 +68,4 @@ Time taken: 0.137 seconds, Fetched: 5 row(s)
 select * from student;
 ```
 
-![](../../../../markdown_img/Pasted%20image%2020221010153018.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020221010153018.png)

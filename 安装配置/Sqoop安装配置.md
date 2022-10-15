@@ -12,12 +12,12 @@
 
 Sqoop 需要配置环境变量
 
-```
+```sh
 export SQOOP_HOME=/opt/sqoop-1.4.7/
 export PATH=$PATH:${SQOOP_HOME}/bin
 ```
 
-![](../markdown_img/Pasted%20image%2020220528141555.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220528141555.png)
 
 在hdfs下创建目录sqoop用来存储导入的数据
 
@@ -31,7 +31,7 @@ hdfs dfs -mkdir /sqoop/
 bin/sqoop list-databases --connect jdbc:mysql://localhost:3306/ --username USERNAME --password PASSWORD
 ```
 
-![](../markdown_img/Pasted%20image%2020220528142100.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220528142100.png)
 
 使用sqoop查看表
 
@@ -39,15 +39,15 @@ bin/sqoop list-databases --connect jdbc:mysql://localhost:3306/ --username USERN
 bin/sqoop list-tables --connect jdbc:mysql://localhost:3306/DATABAS_ENAME --username USERNAME --password PASSWORD
 ```
 
-![](../markdown_img/Pasted%20image%2020220528142213.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220528142213.png)
 
 导出数据到 hdfs 上
 
 ```sh
-`bin/sqoop import "-Dorg.apache.sqoop.splitter.allow_text_splitter=true" --connect jdbc:mysql://master:3306/DATABASE_NAME --username USERNAME --password PASSWORD --table TABLE_NAME --target-dir HDFS_PATH`
+bin/sqoop import "-Dorg.apache.sqoop.splitter.allow_text_splitter=true" --connect jdbc:mysql://master:3306/DATABASE_NAME --username USERNAME --password PASSWORD --table TABLE_NAME --target-dir HDFS_PATH`
 ```
 
-![](../markdown_img/Pasted%20image%2020220528142357.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220528142357.png)
 
 在 hdfs 上查看
 
@@ -55,4 +55,4 @@ bin/sqoop list-tables --connect jdbc:mysql://localhost:3306/DATABAS_ENAME --user
 hdfs dfs -cat HDFS_PATH
 ```
 
-![](../markdown_img/Pasted%20image%2020220528142435.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220528142435.png)

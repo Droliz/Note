@@ -30,13 +30,13 @@ data_rdd.map((_, 1)).foreach(println)
 
 将`"hello", "hadoop", "hello", "spark"`的数据通过map把每一个数据项从`word => (word, 1)`
 
-![](../../../../../markdown_img/Pasted%20image%2020220927090907.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220927090907.png)
 
 #### flatmap
 
 `flatmap = map + flatten`
 
-![](../../../../../markdown_img/Pasted%20image%2020220924144824.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220924144824.png)
 
 
 ```scala
@@ -568,7 +568,3 @@ rdd.filter(_.contains(query))  // _contains(s)
 java的序列化可以序列化任何类，但是字节多传输效率低spark2.x支持另一种序列化框架`kryo`，比较轻巧，即便使用`kryo`也需要继承`Serializable`接口
 
 RDD在shuffle数据时，简单数据类型、数组、字符串以及在spark内部使用Kryo序列化
-
-```scala
-
-```

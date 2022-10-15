@@ -27,8 +27,10 @@ zhihu-url: https://zhuanlan.zhihu.com/p/496745281
 
 解压到想要的地方，我这里是解压到`/opt/`下，如果名字太长可以自己更改，我这里改为了phoenix-5.0.0
 
-`tar -zxvf /home/apache-phoenix-5.0.0-HBase-2.0-bin.tar.gz -C /opt/`
-`mv /opt/apache-phoenix-5.0.0-HBase-2.0-bin /opt/phoenix-5.0.0`
+```sh
+tar -zxvf /home/apache-phoenix-5.0.0-HBase-2.0-bin.tar.gz -C /opt/
+mv /opt/apache-phoenix-5.0.0-HBase-2.0-bin /opt/phoenix-5.0.0
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411172052.png)
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411172121.png)
@@ -39,7 +41,7 @@ zhihu-url: https://zhuanlan.zhihu.com/p/496745281
 `vi /etc/profile`
 
 添加如下配置
-```
+```sh
 export PHOENIX_HOME=/opt/phoenix-5.0.0/
 export PHOENIX_CLASSPATH=$PHOENIX_HOME
 export PATH=$PATH:$PHOENIX_HOME/bin
@@ -65,8 +67,11 @@ export PATH=$PATH:$PHOENIX_HOME/bin
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411172319.png)
 将Hadoop的配置文件`core-site.xml、hdfs-site.xml`拷贝到Phoenix的bin目录下
 
-`cp /opt/hadoop-2.9.2/etc/hadoop/core-site.xml /opt/phoenix-5.0.0/bin/`
-`cp /opt/hadoop-2.9.2/etc/hadoop/hdfs-site.xml /opt/phoenix-5.0.0/bin/`
+```sh
+cp /opt/hadoop-2.9.2/etc/hadoop/core-site.xml /opt/phoenix-5.0.0/bin/
+cp /opt/hadoop-2.9.2/etc/hadoop/hdfs-site.xml /opt/phoenix-5.0.0/bin/
+```
+
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411172346.png)
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411172420.png)
 ### 更改文件运行权限
@@ -74,6 +79,7 @@ export PATH=$PATH:$PHOENIX_HOME/bin
 
 `chmod 777 /opt/phoenix-5.0.0/bin/psql.py`
 `chmod 777 /opt/phoenix-5.0.0/bin/sqlline.py`
+
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411172450.png)
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411172518.png)
 ## 测试

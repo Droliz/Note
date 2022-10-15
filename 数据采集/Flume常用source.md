@@ -110,5 +110,3 @@ bin/flume-ng agent --conf conf --conf-file conf/flume_flume_1.conf --name a1 -Df
 参考[Flume的安装](https://zhuanlan.zhihu.com/p/511455862)
 
 最后可以看到终端发送的可以slave1中看到
-
-

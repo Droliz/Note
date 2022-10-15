@@ -8,7 +8,7 @@
 netsh wlan show profile
 ```
 
-![](../../markdown_img/Pasted%20image%2020220519142717.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220519142717.png)
 
 将所有的 wifi 配置文件导出
 
@@ -16,8 +16,8 @@ netsh wlan show profile
 netsh wlan export profile folder=FILE_PATH key=clear
 ```
 
-![](../../markdown_img/Pasted%20image%2020220519142834.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220519142834.png)
 
 随后在文件中找到 `keyMaterial` 标签包裹的就是密码
 
-![](../../markdown_img/Pasted%20image%2020220519143040.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220519143040.png)

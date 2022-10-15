@@ -4,6 +4,9 @@ zhihu-tags: C++, 数据结构
 zhihu-url: https://zhuanlan.zhihu.com/p/557149391
 ---
 
+# C++栈
+
+简单实现C++栈
 
 ```cpp
 #include<iostream>  

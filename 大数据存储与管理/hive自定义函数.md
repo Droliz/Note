@@ -17,7 +17,7 @@ zhihu-url: https://zhuanlan.zhihu.com/p/506884444
 
 #### 查看系统自带函数
 
-```sql
+```hql
 show functions;
 ```
 

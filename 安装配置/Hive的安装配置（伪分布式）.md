@@ -350,4 +350,3 @@ Beeline：配合Hiveserver2的客户端，更加安全并且不会直接暴露 h
 username和password是前面设置的数据库的密码
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220418170911.png)
-

@@ -18,17 +18,22 @@ zhihu-url: https://zhuanlan.zhihu.com/p/496797201
 
 ### 拷贝配置文件
 
-`cp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-5.0.0-HBase-2.0-client.jar /opt/hbase-2.1.0/lib/`
-`cp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-core-5.0.0-HBase-2.0.jar /opt/hbase-2.1.0/lib/`
+```sh
+cp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-5.0.0-HBase-2.0-client.jar /opt/hbase-2.1.0/lib/
+cp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-core-5.0.0-HBase-2.0.jar /opt/hbase-2.1.0/lib/
+```
+
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411102830.png)
 
 分发到从节点上
 
-`scp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-5.0.0-HBase-2.0-client.jar root@slave1:/opt/hbase-2.1.0/lib/`
-`scp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-core-5.0.0-HBase-2.0.jar root@slave1:/opt/hbase-2.1.0/lib/`
-`scp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-5.0.0-HBase-2.0-client.jar root@slave2:/opt/hbase-2.1.0/lib/`
-`scp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-core-5.0.0-HBase-2.0.jar root@slave2:/opt/hbase-2.1.0/lib/`
+```sh
+scp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-5.0.0-HBase-2.0-client.jar root@slave1:/opt/hbase-2.1.0/lib/
+scp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-core-5.0.0-HBase-2.0.jar root@slave1:/opt/hbase-2.1.0/lib/
+scp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-5.0.0-HBase-2.0-client.jar root@slave2:/opt/hbase-2.1.0/lib/
+scp /opt/apache-phoenix-5.0.0-HBase-2.0-bin/phoenix-core-5.0.0-HBase-2.0.jar root@slave2:/opt/hbase-2.1.0/lib/
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411103326.png)
 
@@ -61,18 +66,22 @@ export PATH=$PATH:$PHOENIX_HOME/bin
 
 ### 修改权限
 
-`chmod 777 /opt/apache-phoenix-5.0.0-HBase-2.0-bin/bin/psql.py`
-``chmod 777 /opt/apache-phoenix-5.0.0-HBase-2.0-bin/bin/sqlline.py``
+```sh
+chmod 777 /opt/apache-phoenix-5.0.0-HBase-2.0-bin/bin/psql.py
+chmod 777 /opt/apache-phoenix-5.0.0-HBase-2.0-bin/bin/sqlline.py
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220411104541.png)
 
 ### 分发
 
-`scp -r /opt/apache-phoenix-5.0.0-HBase-2.0-bin/ root@slave1:/opt/`
-`scp -r /opt/apache-phoenix-5.0.0-HBase-2.0-bin/ root@slave2:/opt/`
+```sh
+scp -r /opt/apache-phoenix-5.0.0-HBase-2.0-bin/ root@slave1:/opt/
+scp -r /opt/apache-phoenix-5.0.0-HBase-2.0-bin/ root@slave2:/opt/
+```
+
 
 配置从节点的phoenix的环境变量
-
 
 ## 测试
 开启hadoop、zookeeper、hbase
@@ -88,7 +97,7 @@ export PATH=$PATH:$PHOENIX_HOME/bin
 ### 测试命令
 
 查看表
-```
+```hql
 !tables
 ```
 

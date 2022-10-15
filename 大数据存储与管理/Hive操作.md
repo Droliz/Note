@@ -37,25 +37,33 @@
 
 修改数据库的属性，`dbproperties`是数据库的属性信息，可以通过修改键值对的方式修改
 
-`alter database DATABASE_NAME set dbproperties(key1=value1, key2=value2……);`
-
+```sql
+alter database DATABASE_NAME set dbproperties(key1=value1, key2=value2……);
+```
 
 
 ### 创建表
-`use DATABASE_NAME;`
-`create table TABLE_NAME(COL_NAME_1 TYPE, COL_NAME_2 TYPE …… );`
+
+```sql
+use DATABASE_NAME;
+create table TABLE_NAME(COL_NAME_1 TYPE, COL_NAME_2 TYPE …… );
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220422102134.png)
 
 使用自定义分隔符创建内部表
 
-`create table TABLE_NAME(COL_NAME TYPE) row format delimited fields terminated by "\t";`
+```sql
+create table TABLE_NAME(COL_NAME TYPE) row format delimited fields terminated by "\t";
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220422104422.png)
 
 创建表也可以通过查询结果创建（表的结构和数据）
 
-`create table if not exists CREATE_TABLE_NAME as select COL1, COL2 from TABLE_NAME;`
+```sql
+create table if not exists CREATE_TABLE_NAME as select COL1, COL2 from TABLE_NAME;
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220423092239.png)
 
@@ -599,42 +607,33 @@ hive -e 'SELECT_SQL' > PATH_FILE_NAME;
 
 将指定查询数据导出到指定的文件中
 
-
-
-
-
-
-
+```xml
 <property>
     <name>hive.support.concurrency</name>
     <value>true</value>
-  </property>
-    <property>
+</property>
+<property>
     <name>hive.enforce.bucketing</name>
     <value>true</value>
-  </property>
-    <property>
+</property>
+<property>
     <name>hive.exec.dynamic.partition.mode</name>
     <value>nonstrict</value>
-  </property>
-  <property>
+</property>
+<property>
     <name>hive.txn.manager</name>
     <value>org.apache.hadoop.hive.ql.lockmgr.DbTxnManager</value>
-  </property>
-    <property>
+</property>
+<property>
     <name>hive.compactor.initiator.on</name>
     <value>true</value>
-  </property>
-  <property>
+</property>
+<property>
     <name>hive.compactor.worker.threads</name>
     <value>1</value>
-  </property>
-  <property>
+</property>
+<property>
 	<name>hive.in.test</name>
 	<value>true</value>
-  </property>
-
-
-
-
-
+</property>
+```

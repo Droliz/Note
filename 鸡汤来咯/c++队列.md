@@ -1,3 +1,7 @@
+# C++队列
+
+简单实现C++队列
+
 ```cpp
 #include "iostream"  
 using namespace std;  

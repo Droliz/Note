@@ -1,3 +1,5 @@
+# Join操作
+
 ##  准备
 
 数据格式
@@ -222,4 +224,4 @@ public static void main(String[] args)
 
 ## 结果
 
-![](../../markdown_img/Pasted%20image%2020220909143139.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220909143139.png)

@@ -1,4 +1,4 @@
-	# Flume整合kafka
+# Flume整合kafka
 
 ## 准备
 
@@ -18,10 +18,12 @@ var -zxvf kafka_2.11-2.0.0.tar.gz -C /opt/
 
 #### 配置 zoopkeeper.properties
 
-```
-1：创建zookeeper目录：mkdir  /opt/kafka_2.10-0.10.0.1/zookeeper  
+```sh
+# 1：创建zookeeper目录：
+mkdir  /opt/kafka_2.10-0.10.0.1/zookeeper  
 
-2：创建zookeeper日志目录: mkdir /opt/kafka_2.10-0.10.0.1/log/zookeeper
+# 2：创建zookeeper日志目录: 
+mkdir /opt/kafka_2.10-0.10.0.1/log/zookeeper
 ```
 
 ```sh
@@ -61,6 +63,7 @@ host.name=master #服务器IP地址，修改为自己的服务器IP
 ```
 
 ## 测试 kafka
+
 ### 启动kafka
 
 ```sh

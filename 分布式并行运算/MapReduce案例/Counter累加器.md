@@ -1,3 +1,6 @@
+# Counter累加器
+
+## 准备
 
 自定义计数器用的比较广泛，特别是统计无效数据条数的时候，我们就会用到计数器来记录错误日志的条数。
 
@@ -71,4 +74,4 @@ public static void main(String[] args)
 
 可以在运行的日志中看到
 
-![](../../markdown_img/Pasted%20image%2020220908114558.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220908114558.png)

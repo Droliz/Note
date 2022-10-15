@@ -34,7 +34,7 @@ UE_4.27\Engine\Config\BaseEngine.ini
 
 ### 项目结构
 
-![](../markdown_img/Pasted%20image%2020220730234614.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220730234614.png)
 
 * Config：包含了项目设置，键盘输入之类的配置文件
 * Content：存放引擎或游戏内容，包括地图、贴图、模型、材质、蓝图等
@@ -48,7 +48,7 @@ UE_4.27\Engine\Config\BaseEngine.ini
 
 #### 菜单
 
-![](../markdown_img/Pasted%20image%2020220731002136.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220731002136.png)
 
 * 文件：加载和保存项目及关卡
 * 编辑：标准的复制和粘贴操作、以及编辑器首选项和项目设置
@@ -57,7 +57,7 @@ UE_4.27\Engine\Config\BaseEngine.ini
 
 #### 内容浏览器
 
-![](../markdown_img/Pasted%20image%2020220731000141.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220731000141.png)
 
 项目的地图关卡在 `内容/...BP/Maps` 下，找到关卡，点击开始即可
 
@@ -67,7 +67,7 @@ UE_4.27\Engine\Config\BaseEngine.ini
 
 ### 模板功能
 
-![](../markdown_img/Pasted%20image%2020220731000703.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220731000703.png)
 
 提供的蓝图模板
 
@@ -268,7 +268,7 @@ bool IsDead = false;
 
 创建蓝图类（左蓝图默认，右实例对象）
 
-![](../markdown_img/Pasted%20image%2020220819072220.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220819072220.png)
 
 
 ```cpp
@@ -278,7 +278,7 @@ UE_LOG(LogTemp, Warning, TEXT("Health :%f"), Health);
 UE_LOG(LogTemp, Warning, TEXT("IsDead : %d, HasWeapon : %d"), IsDead, static_cast<int>(HasWeapon));
 ```
 
-![](../markdown_img/Pasted%20image%2020220819073503.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220819073503.png)
 
 在world中的两个对象，都有自己的对应的变量集
 
@@ -312,11 +312,11 @@ AMyActor::AMyActor()
 
 可以在细节中看到继承 BashMesh 的属性
 
-![](../markdown_img/Pasted%20image%2020220819100718.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220819100718.png)
 
 创建两个静态网个体，并设置形状，通过 TranForm 对象获取详细信息
 
-![](../markdown_img/Pasted%20image%2020220819104421.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220819104421.png)
 
 ```cpp
 void AMyActor::BeginPlay()
@@ -343,7 +343,7 @@ void AMyActor::BeginPlay()
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020220819104222.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220819104222.png)
 
 
 （沿正弦）移动
@@ -426,7 +426,7 @@ void AMyActor::Tick(float DeltaTime)
 
 可以直接在详细中修改
 
-![](../markdown_img/Pasted%20image%2020220820103633.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220820103633.png)
 
 UMETA()可以用来修饰变量,效果类似UPROPERTY(),下面两种效果是一样的
 
@@ -471,7 +471,7 @@ protected:
 ```
 
 在 ue4 详细面板可以看到相关的属性和初始值
-![](../markdown_img/Pasted%20image%2020220820211216.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220820211216.png)
 
 
 
@@ -479,15 +479,15 @@ protected:
 
 在材质编译器中，按下 `1/2/3/4 + click` 按下数字代表分量的向量的数量，最多 4 个 
 
-![](../markdown_img/Pasted%20image%2020220820230127.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220820230127.png)
 
 通过右键节点，可以将节点转换为参数，然后再资产管理器中生成改节点的实例，再实例中可以改变该参数
 
-![](../markdown_img/Pasted%20image%2020220820230922.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220820230922.png)
 
 使用相同材质，但是圆锥是使用实例，再实例中更改 Color 节点的属性值
 
-![](../markdown_img/Pasted%20image%2020220820231011.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220820231011.png)
 
 
 在蓝图基础上，通过c++可以很快速的更改`Color`参数
@@ -516,7 +516,7 @@ void AMyActor::SetColor(FLinearColor Color) {
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020220821075744.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821075744.png)
 
 ### 计时器
 
@@ -611,7 +611,7 @@ void AGenmetryHubActor::BeginPlay()
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020220821110537.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821110537.png)
 
 将My Class 设置为蓝图，更改蓝图的信息，将会Genmetry 实例的位置动态生成此 蓝图
 
@@ -677,7 +677,7 @@ for (const FGeometryPayload Payload : GeometryPayloads)
 
 在详细中可以自定义添加多个对象，以及对应的属性
 
-![](../markdown_img/Pasted%20image%2020220821122428.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821122428.png)
 
 
 ### 代表宏：UFUNCTION
@@ -711,10 +711,10 @@ protected:
 	FGeometryData GeometryData;
 ```
 
-![](../markdown_img/Pasted%20image%2020220821125813.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821125813.png)
 
 可以选择右键分割，就会直接在Return 中分开，不需要额外的中断
-![](../markdown_img/Pasted%20image%2020220821130118.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821130118.png)
 
 **委托**
 
@@ -728,7 +728,7 @@ GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyActor::OnTimerFired, Geom
 
 使用宏 `DECLARE_DELEGATE` 声明委托，相比其他的 `DECLARE_ ...` 声明，此声明只带一个参数：可以分配给委托的任意名称
 
-![](../markdown_img/Pasted%20image%2020220821194443.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821194443.png)
 
 如果想在蓝图中可以使用简单的委托宏 `DECLARE_DYNAMIC_DELEGATE`，更多的就需要用到其他的
 
@@ -815,13 +815,13 @@ void AMyActor::OnTimerFired()
 
 通过蓝图
 
-![](../markdown_img/Pasted%20image%2020220821205550.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821205550.png)
 
-![](../markdown_img/Pasted%20image%2020220821205649.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821205649.png)
 
 设置在屏幕上输出信息
 
-![](../markdown_img/Pasted%20image%2020220821212254.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821212254.png)
 
 在C++中绑定
 
@@ -865,7 +865,7 @@ void AGenmetryHubActor::DoActorSpawn()
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020220821224955.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821224955.png)
 
 在上面基础上，对添加新 actor 中添加进行销毁功能
 
@@ -897,23 +897,23 @@ void AMyActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020220821225906.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220821225906.png)
 
 ### ue 主要类
 
 在ue4世界设置中，可以直接配置的引擎类
 
-![](../markdown_img/Pasted%20image%2020220822001002.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822001002.png)
 
 新建蓝图，可以看到每个类都哟不同的作用
 
-![](../markdown_img/Pasted%20image%2020220822003526.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822003526.png)
 
 #### APawn 类
 
 每个关卡都有一个 `APlayerController` 可以让输入设备控制游戏。
 
-![](../markdown_img/Pasted%20image%2020220822004043.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822004043.png)
 
 ##### 键盘输入
 
@@ -933,21 +933,21 @@ Arider_testGameModeBase::Arider_testGameModeBase()
 
 可以看到，世界场景设置的默认 pawn 类变为了自定义的
 
-![](../markdown_img/Pasted%20image%2020220822022552.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822022552.png)
 
 在基类的构造函数中初始化了所有的类的默认
 
-![](../markdown_img/Pasted%20image%2020220822023037.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822023037.png)
 
 2、使用轴映射完成前后左右的移动
 
 在项目设置中找到输入，可以看到一些输入绑定
 
-![](../markdown_img/Pasted%20image%2020220822060924.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822060924.png)
 
 对应的项目目录中的 `Config` 目录下 `ini` 文件（.ini 文件是Initialization File的缩写，即初始化文件 ，是windows的系统配置文件所采用的存储格式。）
 
-![](../markdown_img/Pasted%20image%2020220822061104.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822061104.png)
 
 **动作映射与轴映射**
 
@@ -957,7 +957,7 @@ Arider_testGameModeBase::Arider_testGameModeBase()
 
 前后左右的移动
 
-![](../markdown_img/Pasted%20image%2020220822070931.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822070931.png)
 
 **在 C++ 中编辑**
 
@@ -1049,7 +1049,7 @@ ASandboxPawn::ASandboxPawn()
 
 创建 `SandboxPawn` 的蓝图类 `BP_SandboxPawn`，即可在蓝图比机器中查看到如加上去的摄影机，以及相关参数
 
-![](../markdown_img/Pasted%20image%2020220822073740.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220822073740.png)
 
 多个 `pawn` 之间切换
 

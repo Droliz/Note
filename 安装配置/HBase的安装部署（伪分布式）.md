@@ -12,6 +12,7 @@ zhihu-url: https://zhuanlan.zhihu.com/p/496108716
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220401134845.png)
 
 ### 配置hosts
+
 `vi /etc/hosts`
 
 格式：ip 主机名
@@ -19,6 +20,7 @@ zhihu-url: https://zhuanlan.zhihu.com/p/496108716
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220401135224.png)
 
 ### 关闭防火墙
+
 ```sh
 systemctl stop firewalld
 systemctl disable firewalld
@@ -86,13 +88,18 @@ master
 
 ### 软连接
 软连接Hadoop的两个配置文件`core-site.xml和hdfs-site.xml`到hbase的配置文件中
-`ln -s /opt/hadoop-2.9.2/etc/hadoop/core-site.xml /opt/hbase-2.1.0/conf/core-site.xml`
-`ln -s /opt/hadoop-2.9.2/etc/hadoop/hdfs-site.xml /opt/hbase-2.1.0/conf/hdfs-site.xml`
+
+```sh
+ln -s /opt/hadoop-2.9.2/etc/hadoop/core-site.xml /opt/hbase-2.1.0/conf/core-site.xml
+ln -s /opt/hadoop-2.9.2/etc/hadoop/hdfs-site.xml /opt/hbase-2.1.0/conf/hdfs-site.xml
+```
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220401143241.png)
 
 ### 拷贝第三方包
+
 `cp /opt/hbase-2.1.0/lib/client-facing-thirdparty/* /opt/hbase-2.1.0/lib/`
+
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220401143350.png)
 
 ## 启动Hbase
@@ -107,4 +114,3 @@ master
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220401143611.png)
 
 其中HBase的两个进程为HMaster、HRegionServer；HQuorumPeer则为内置的Zookeeper进程
-

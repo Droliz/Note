@@ -56,7 +56,7 @@ make install
 
 如果成功会显示如下
 
-```
+```text
 Collecting setuptools
 Collecting pip
 Installing collected packages: setuptools, pip
@@ -69,6 +69,7 @@ Successfully installed pip-10.0.1 setuptools-39.0.1
 该错误是因为本机缺少gcc编译环境，只需安装gcc即可
 
 使用yum安装即可
+
 ```sh
 yum install -y gcc
 ```
@@ -94,6 +95,7 @@ yum install -y libffi-devel
 将python库路径添加到/etc/ld.so.conf配置中
 
 ld.so.conf文件是存储etc目录下所有的.conf文件
+
 ```sh
 echo "/usr/python/lib" >> /etc/ld.so.conf
 ldconfig
@@ -117,6 +119,3 @@ python --version
 # 检测pip3
 pip3 -V	# 显示版本
 ```
-
-
-
