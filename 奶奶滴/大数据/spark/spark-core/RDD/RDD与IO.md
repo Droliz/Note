@@ -16,3 +16,7 @@ lines.flatMap(_.split(" ")) // map + flatten
 
 
 ![](http://www.droliz.cn/markdown_img/Pasted%20image%2020221002002155.png)
+
+
+（'hello', 1）  1 
+re  (1, 1, ,11,)

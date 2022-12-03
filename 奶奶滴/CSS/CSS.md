@@ -19,7 +19,7 @@ CSS写在 ***style标签*** 中，style标签一般写在head标签里面，titl
 		font-size: 20px;
 	}
 </style>
-    ```
+```
 
 ### 外联式
 
@@ -228,6 +228,8 @@ CSS写在 ***style属性*** 中，配合js使用
 
 **字体**
 
+字体属于矢量，不会失真
+
 字体大小:
 * 属性名:font-size
 * 取值:数字 + px
@@ -409,13 +411,13 @@ font(复合属性)
 <a href="http://">超链接</a>
 ```
 
-css3 中可以在 `@font-face` 中编写引用字体
+css3 中可以在 `@font-face` 中编写引用字体（引用服务器的字体）
 
 ```css
 /* 名字和路径必选 */
 @font-face {
 	font-family: 'Font-Name',   /* 字体的名称 */
-	src: url('./name.woof'),     /* 字体文件路径 */
+	src: url('./name.ttf'),     /* 字体文件路径 */
 	font-weight: normal,      
 	font-style: normal,
 	font-stretch: normal
@@ -472,7 +474,7 @@ div{
 	width: 300px;
 	height: 300px;
 	background-color: pink;
-	<!-- auto：自适应 -->
+	/* auto：自适应 */
 	margin: 0 auto;
 }
 </style>
@@ -495,7 +497,7 @@ div{
 ```css
 background-image: linear-gradient(direction, color-stop1, color-stop2, ...);
 /* 例如 从左上角到右下角，从红色到蓝色*/
-background-image: linear-gradient(to botton right, red, blue);
+background-image: linear-gradient(to bottom right, red, blue);
 /* 也可以直接指定角度 */
 /* 颜色可以选择多个，代表一个过度 */
 ```
@@ -566,7 +568,11 @@ background-image: radial-gradient(farthest-side at 60% 55%, red, yellow, black);
 	* 不可以设置宽高
 * 代表标签
 	* `a、span、b、u、i、s、strong、ins、em、del等`
-  
+
+行内元素可以设置`margin、padding、border`但是垂直方向不影响
+
+而且水平方向的外边距不会出现合并现象
+
 #### 行内块元素
 * 显示特点
 	* 一行可以显示多个
@@ -581,6 +587,12 @@ background-image: radial-gradient(farthest-side at 60% 55%, red, yellow, black);
 | display: block        | 转换为 **块级元素**   |
 | display: inline       | 转换为 **行内元素**   |
 | display: inline-block | 转换为 **行内块元素** |
+|diaplay: table|设置为表格|
+|diaplay: none|隐藏|
+
+
+`visibility`元素用于设置元素的显示状态默认为`visible`，为`hidden`时隐藏，但是占位
+
 
 ***标签的嵌套***
 
@@ -693,20 +705,33 @@ background-image: radial-gradient(farthest-side at 60% 55%, red, yellow, black);
 
 ***注意***
 
-* 外边距折叠现象
-    * ***合并现象***
-        * 场景：**垂直布局** 的 **块级元素** 上下的margin会合并
-        * 结果：最终两者距离为margin的最大值
-        * 解决方法：只给予其中一个盒子设置margin即可
-    * ***塌陷现象***
-        * 场景：**互相嵌套** 的 **块级元素**，子元素的 margin-top会作用在父元素上
-        * 结果：导致父元素和子元素一起向下移动
-        * 解决方法：
-            * 给父元素设置border-top或者padding-top
-            * 给父元素设置overflow：hidden
-            * 转换成行内块元素
-            * 设置浮动
+外边距折叠现象
+* ***合并现象***
+	* 场景：**垂直布局** 的 **块级元素** 上下的margin会合并
+	* 结果：最终两者距离为margin的最大值（一正一负取和，都负取绝对值大的）
+	* 解决方法：只给予其中一个盒子设置margin即可
+* ***塌陷现象***
+	* 场景：**互相嵌套** 的 **块级元素**，子元素的 margin-top会作用在父元素上
+	* 结果：导致父元素和子元素一起向下移动
+	* 解决方法：
+		* 给父元素设置border-top或者padding-top
+		* 给父元素设置overflow：hidden
+		* 转换成行内块元素
+		* 设置浮动
 
+盒子模型中只有`width、margin-left、margin-right`三个属性可以设置`auto`   
+
+**而在元素的水平布局中，子元素的水平方向上的长度和，一定是等于父元素的宽度。如果不够，会将上述可设为`auto`的值加上缺少的值达到等于的效果**
+
+外边距折叠可以使用伪元素解决（同时解决浮动塌陷）
+
+```css
+.clearFix::before, .clearFix::after {
+	content: '';   
+	display: table;   /* 需要独占一行，且table可以同时及解决高度塌陷和外边距重叠 */
+	clear: both;   /* 清除浮动 */   
+}
+```
 
 ## CSS浮动
 
@@ -778,7 +803,7 @@ background-image: radial-gradient(farthest-side at 60% 55%, red, yellow, black);
 * 标准流又称文档流，是浏览器在渲染网页内容时默认采用的一套排版规则，规定了应该以何种方式排列元素
 * 常见标准流
 	* 块级元素：从上到下，垂直布局，独占一行
-	* 行内元素 / 行内块元素：从左往右，水平布局，空间不够自动折行
+	* 行内元素 / 行内块元素：从左往右，水平布局，空间不够自动折行（行内元素宽高由内部元素撑开）
 
 
 ### 浮动
@@ -836,6 +861,9 @@ background-image: radial-gradient(farthest-side at 60% 55%, red, yellow, black);
 >浮动元素不能通过text-align：center；或者margin：0 auto；
 
 ### 清除浮动
+
+`clear: both`
+
 * 介绍
     * 含义：***清除浮动带来的影响***
         * 影响：如果子元素浮动了，此时子元素不能撑开标准流的块级父元素
@@ -916,13 +944,15 @@ background-image: radial-gradient(farthest-side at 60% 55%, red, yellow, black);
 	/* 转为表格 */ 
 	display: table;
 }
-clear_fix::after{
+
+.clear_fix::after{
 	clear: both;
 }
 ```
 
-* ***overflow***
-	* 给父元素设置`overflow: hidden;`属性
+**overflow***
+
+* 给父元素设置`overflow: hidden;`属性
 
 ## CSS定位装饰
 
@@ -941,8 +971,8 @@ clear_fix::after{
 
 #### 使用
 * 设置定位方式
-	* 属性名：position
-	* 常见属性值****
+	* 属性名：`position`
+	* 常见属性值
 
 | 定位方式 |  属性值  |
 | :------: | :------: |
@@ -950,6 +980,7 @@ clear_fix::after{
 | 相对定位 | relative |
 | 绝对定位 | absolute |
 | 固定定位 |  fixed   |
+|粘滞定位|sticky|
 
 * 设置偏移值
 	* 偏移值设置分为两个方向，水平和垂直各选一个
@@ -968,12 +999,13 @@ clear_fix::after{
 **静态定位**
 * 所有支持position的元素都默认静态定位
 
-**相对定位**        
+**相对定位**    
+
 * 介绍：相对自己之前的位置进行移动
 * `position: relative`
 * 特点：
 	* 具备原有标签的显示模式
-	* 在页面中占有原来的位置 -> 没有脱标
+	* 在页面中占有原来的位置 -> **没有脱标**
 * 应用场景：
 	* 配合绝对定位（子绝父相）
 	* 用于小范围的移动
@@ -983,10 +1015,11 @@ clear_fix::after{
 * `position: absolute`
 * 特点：
 	* 默认在浏览器可视区域移动
-	* 再页面中不占位置 -> 脱标
+	* 再页面中不占位置 -> **脱标**
 	* 改变标签显示模式具备行内块特点
 * 应用场景：
 	* 配合相对定位
+
 >逐层向外查找父级（有定位就跟随定位父级），如果没有父级或父级没定位，则以浏览器窗口为参照进行定位
 
 居中
@@ -995,11 +1028,12 @@ clear_fix::after{
 <style>
 	.center {
 		position: absolute;
+		top: 50%;
 		left: 50%;
 		/* 位移，相对盒子的宽高 */
 		transform: translate(-50%, -50%);
-
-		weight: 200px;
+		
+		width: 200px;
 		height: 200px;
 		background-color: pink;
 	}
@@ -1008,17 +1042,94 @@ clear_fix::after{
 <div class="center"></div>
 ```
 
+或者
+
+```css
+/* 利用绝对定位中水平垂直浏览器都会计算 所有水平垂直之和 = 父元素宽高 */
+.center {
+	position: absolute;
+	width: 200px;
+	height: 200px;
+	background-color: pink;
+	top: 0;   /* 去除默认的 aotu 避免浏览器自动填充 */
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;  /* 浏览器自动填充 */
+}
+```
+
 **固定定位**
 * 介绍：相对于浏览器位置改变
 * `position: fixed`
 * 特点：
-	* 页面中不占位置 -> 脱标
+	* 页面中不占位置 -> **脱标**
 	* 显示模式具备行内块特点
 	* 让盒子固定在页面某个位置
 
+**粘滞定位**
+
+- 和相对定位基本一致
+- `position: sticky`
+- 粘滞定位可以在元素到达某个位置时在视窗中不动，当滚动到之前的位置，那么就会回到原始位置
+
+粘滞定位不**脱标**
+
+例如：京东的侧边菜单
+
+```html
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta content="关键字1,关键字2,关键字3" name="keywords">  
+    <title>Title</title>  
+    <style>  
+        * {  
+            font-size: 60px;  
+        }  
+  
+        .box1 {  
+            width: 200px;  
+            height: 200px;  
+            background-color: #bfa;  
+        }  
+  
+        .box4 {  
+            position: sticky;  
+            top: 300px;    /* 当box4top达到300px时就会固定住 */
+  
+            width: 200px;  
+            height: 200px;  
+            background-color: orange;  
+        }  
+  
+        .box3 {  
+            width: 200px;  
+            height: 200px;  
+            background-color: yellow;  
+        }  
+  
+    </style>  
+</head>  
+<body>  
+<div>  
+    <div class="box1">1</div>  
+    <div class="box2">2</div>  
+    <div class="box3">3</div>  
+    <div class="box3">3</div>  
+    <div class="box4">4</div>  
+    <div class="box3">3</div>  
+    <div class="box3">3</div>  
+    <div class="box3">3</div>  
+</div>  
+</body>  
+</html>
+```
+
 >标准流 < 浮动 < 定位\
 >定位中，HTML写在下面的元素级别高，会覆盖上面的元素
->如果想人为干扰定位的级别，添加`z-index: 数字;`属性,默认位 0 ，数字越大级别越高（必须配合定位）
+>如果想人为干扰定位的级别（结构上同一层的元素），添加`z-index: 数字;`属性,默认位 0 ，数字越大级别越高（前提是元素开启定位）
 
 ### 装饰
 
@@ -1169,37 +1280,3 @@ ul {
 |  color   |      阴影颜色（可选）      |
 |  inset   | 将阴影改为内部阴影（可选） |
 
-### 过渡
-* 作用：让元素样式慢慢变化
-* 属性名：transition
-* 常见取值
-
-|   参数   |                               取值                                |
-| :------: | :---------------------------------------------------------------: |
-| 过渡属性 | all：所有能过度的属性都过度、具体属性名如：width：只过度width属性 |
-| 过渡时长 |                             数字 + s                              |
-
-* 注意点
-	* 过渡需要：默认状态和hover状态样式不同
-	* transition是加给需要过渡的元素本身添加的
-	* transition属性设置在不同状态中效果不同
-		* 给默认状态设置，鼠标移入移出都有过渡效果
-		* 给hover状态设置，鼠标移入有过渡效果，移出没有
-
-
-### 转换
-
-#### 2D 转换
-
-**rotateX()**
-
-围绕给定度数的 X 轴旋转的元素
-
-```css
-div { 
-	transform: rotateX(120deg); 
-	-webkit-transform: rotateX(120deg); /* Safari 与 Chrome */ 
-}
-```
-
-#### 3D 转换

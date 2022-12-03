@@ -71,6 +71,7 @@ ts-node 文件名.ts
 ~~~
 
 ## TS 常用类型
+
 ### TS 类型检测
 
 JS有类型，但是不会检查变量的类型是否发生变化，ts会检查类型的变化，可以显示标记出代码中的意外行为
@@ -159,30 +160,34 @@ let arr: CustomArray;
 
 为函数指定类型
 * 单独指定参数、返回值类型
-	```ts
-	const add = (num1: number, num2: number): number => {
-	    return num1 + num2
-	}
-	  
-	function add2(num1: number, num2: number): number {
-	    return num1 + num2
-	}
-	```
+
+```ts
+const add = (num1: number, num2: number): number => {
+	return num1 + num2
+}
+  
+function add2(num1: number, num2: number): number {
+	return num1 + num2
+}
+```
+
 * 同时指定参数、返回值类型
-	```ts
-	const add: (num1: number, num2: number) => number = (num1 , num2) => {
-	    return num1 + num2;
-	}
+
+```ts
+const add: (num1: number, num2: number) => number = (num1 , num2) => {
+	return num1 + num2;
+}
 
 
-	// 也可以使用类型别名
-	type func = (num1: number, num2: number) => number;
-	  
-	const add: func = (num1 , num2) => {
-	    return num1 + num2;
-	}
-	```
-	当函数转为表达式时，可以通过类似箭头函数的形式为函数添加类型
+// 也可以使用类型别名
+type func = (num1: number, num2: number) => number;
+  
+const add: func = (num1 , num2) => {
+	return num1 + num2;
+}
+```
+	
+当函数转为表达式时，可以通过类似箭头函数的形式为函数添加类型
 
 返回类型为 `void` 时代表无返回值
 
@@ -549,67 +554,74 @@ class Person implements Singable {
 控制类中的属性和方法是否对外可访问
 
 * public：公有（默认），所有可访问
-	```ts
-	class Person {
-		// 公有的 
-	    public Age: number;
-	    constructor(age: number) {
-	        this.Age = age;
-	    }
+
+```ts
+class Person {
+	// 公有的 
+	public Age: number;
+	constructor(age: number) {
+		this.Age = age;
 	}
-	```
+}
+```
+
 * protected：受保护的，仅在类和子类中可访问，子类可以通过this访问
-	```ts
-	class Person {
-	// 只能在类中或子类中访问
-	    protected sayHello() {
-	        console.log("Hello ");
-	    }
+
+```ts
+class Person {
+// 只能在类中或子类中访问
+	protected sayHello() {
+		console.log("Hello ");
 	}
-	  
-	class Jack extends Person {
-	    say() {
-		    // 采用 this 关键字访问
-	        this.sayHello();
-	    }      
-	}
-	```
+}
+
+class Jack extends Person {
+	say() {
+		// 采用 this 关键字访问
+		this.sayHello();
+	}      
+}
+```
+
 * private：私有的，仅在类中可调用
-	```ts
-	class Person {
-	    private sayGoodbye() {
-	        console.log("Goodbye ");
-	    }
-	    say() {
-		    // 在类中调用
-		    this.sayGoodbye()
-	    }
+
+```ts
+class Person {
+	private sayGoodbye() {
+		console.log("Goodbye ");
 	}
-	```
+	say() {
+		// 在类中调用
+		this.sayGoodbye()
+	}
+}
+```
+
 * readonly：只读，只能修饰属性，防止在构造函数外对属性进行赋值
-	```ts
-	class Person {
-		// 接口或者 {} 表示的对象类型也可以用 readonly 修饰
-	    readonly name: string = 'zs';  // 允许初始化默认值
-	    // 只能在构造方法中赋值
-	    constructor(name: string) {
-	        this.name = name;
-	    }
-	    
-		setName() {
-	        // error: 无法分配到 'name' ，因为它是只读的
-	        this.name = "";
-	    }
+
+```ts
+class Person {
+	// 接口或者 {} 表示的对象类型也可以用 readonly 修饰
+	readonly name: string = 'zs';  // 允许初始化默认值
+	// 只能在构造方法中赋值
+	constructor(name: string) {
+		this.name = name;
 	}
+	
+	setName() {
+		// error: 无法分配到 'name' ，因为它是只读的
+		this.name = "";
+	}
+}
 
 
-	// 接口中使用
-	interface Person {
-	    readonly firstName: string;
-	}
-	// 在对象中使用
-	let obj: { readonly name: string } = { name: "John" };
-	```
+// 接口中使用
+interface Person {
+	readonly firstName: string;
+}
+// 在对象中使用
+let obj: { readonly name: string } = { name: "John" };
+```
 
 
 ### 类型兼容性
@@ -686,36 +698,39 @@ p1 = p3;
 
 * 参数个数
 	* 参数多的兼容参数少的（少的可以赋值给多的）
-	```ts
-	let F1 = (a: number) => 0;
-	let F2 = (a: number, b: number) => 0;
-	  
-	F2 = F1;
-	F1 = F2; // error
 
-    // 例如
-    let a = [1, 2, 3];
+```ts
+let F1 = (a: number) => 0;
+let F2 = (a: number, b: number) => 0;
   
-	a.forEach((value, index, array) => {
-	    console.log(value, index, array);
-	});
-	  
-	a.forEach((value) => {
-	    console.log(value);
-	});
+F2 = F1;
+F1 = F2; // error
 
-    // forEach 第一个参数是回调函数，允许三个参数，但是致谢一个参数也是没有问题的
-	```
+// 例如
+let a = [1, 2, 3];
+
+a.forEach((value, index, array) => {
+	console.log(value, index, array);
+});
+  
+a.forEach((value) => {
+	console.log(value);
+});
+
+// forEach 第一个参数是回调函数，允许三个参数，但是只有一个参数也是没有问题的
+```
+
 * 参数类型
 	* **相同位置**的参数类型要相同或兼容
 * 返回值类型
 	* 对于仅仅是返回值类型不同的函数，源函数返回值类型必须是目标类型的子类型
-	```TS
-	let x = () => ({name: 'Alice'}); 
-	let y = () => ({name: 'Alice', location: 'Seattle'}); 
-	x = y; // OK 
-	y = x; // Error, because x() lacks a location property
-	```
+
+```TS
+let x = () => ({name: 'Alice'}); 
+let y = () => ({name: 'Alice', location: 'Seattle'}); 
+x = y; // OK 
+y = x; // Error, because x() lacks a location property
+```
 
 
 ### 交叉类型
@@ -884,60 +899,67 @@ myNum.defaultValue = 10;
 ts中有一些内置的常用的工具类型，来简化一些长技安的操作
 
 * `Partial<Type>` ：用来构造一个类型，将 Type 的所有属性设置为可选的
-	```ts
-	interface Props {
-	    name: string;
-	    age: number;
-	}
-	  
-	// p 类型拥有 Props 类型的所有属性，且属性都是可选的
-	type P = Partial<Props>;
-	```
+
+```ts
+interface Props {
+	name: string;
+	age: number;
+}
+  
+// p 类型拥有 Props 类型的所有属性，且属性都是可选的
+type P = Partial<Props>;
+```
+
 * `Readonly<Type>`：用来构造一个类型，将 Type 的所有属性设置为只读
-	```ts
-	interface Props {
-	    name: string;
-	    age: number;
-	}
-	  
-	// p 类型拥有 Props 类型的所有属性，且属性都是只读的
-	type p = Readonly<Props>;
-	const a: p = {
-	    name: '张三',
-	    age: 18
-	};
-	  
-	a.name = '李四'; // error: 只读类型不能修改属性
-	```
+
+```ts
+interface Props {
+	name: string;
+	age: number;
+}
+  
+// p 类型拥有 Props 类型的所有属性，且属性都是只读的
+type p = Readonly<Props>;
+const a: p = {
+	name: '张三',
+	age: 18
+};
+  
+a.name = '李四'; // error: 只读类型不能修改属性
+```
+
 * `Pick<Type, Keys>`：从 Type 中选择一组属性类构造新类型
-	```ts
-	interface Props {
-	    name: string;
-	    age: number;
-	    address: string;
-	}
-	  
-	// p 类型拥有 Props 类型的部分属性
-	type p = Pick<Props, 'name' | 'age'>;
-	  
-	const a: p = {
-	    name: '张三',
-	    age: 18
-	}
-	```
+
+```ts
+interface Props {
+	name: string;
+	age: number;
+	address: string;
+}
+  
+// p 类型拥有 Props 类型的部分属性
+type p = Pick<Props, 'name' | 'age'>;
+  
+const a: p = {
+	name: '张三',
+	age: 18
+}
+```
+
 * `Record<Keys, Type>`：构造一个对象，属性类型为 Type
-	```ts
-	interface obj {
-	    name: string;
-	    age: number;
-	    address: string;
-	};
-	  
-	// 此类型拥有 obj 的所有属性，属性类型指定为 string
-	type o = Record<keyof obj, string>;   // 利用 keyof 获取所有键
-	// 此类型拥有如下属性：name、age、address
-	type p = Record<'name' | 'age' | 'address', string>;
-	```
+
+```ts
+interface obj {
+	name: string;
+	age: number;
+	address: string;
+};
+  
+// 此类型拥有 obj 的所有属性，属性类型指定为 string
+type o = Record<keyof obj, string>;   // 利用 keyof 获取所有键
+// 此类型拥有如下属性：name、age、address
+type p = Record<'name' | 'age' | 'address', string>;
+```
 
 ### 索引签名类型
 
@@ -954,6 +976,7 @@ let arr: Arr<number> = [1, 2, 3]
 ### 映射类型
 
 映射类型：基于旧类型，创建新类型
+
 ```ts
 type keys = 'x' | 'y' | 'z';
 // 依据 keys 类型 创建新类型

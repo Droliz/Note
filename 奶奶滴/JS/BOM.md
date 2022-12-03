@@ -54,7 +54,7 @@ window.addEventListener("resize", function() {代码块})
 * setInterval(函数, 时间间隔毫秒)
 	* 每隔时间间隔调用一次（**重复调用**）
 	* `clearInterval`可以清除定时器
-	
+
 ```html
 <!-- 验证码的间隔发送 -->
 <script>
@@ -93,7 +93,7 @@ window.addEventListener("resize", function() {代码块})
 在定义函数的时候this的指向是不确定的，只有函数执行的时候才能确定this的指向，一般情况下this的最终指向是调用它的对象
 
 * 在**全局作用域**或**普通函数**中this指向全局对象window（在定时器指向window）
-* 在方法调用中，this指向掉头用者
+* 在方法调用中，this指向掉用者
 * 构造函数中this指向构造函数的实例
 
 #### JS执行队列

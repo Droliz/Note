@@ -32,16 +32,16 @@ if __name__ == "__main__":
 ```
 
 ### 画笔运动
-![](../../../markdown_img/Pasted%20image%2020220829215352.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220829215352.png)
 
 ### 画笔控制
 
-![](../../../markdown_img/Pasted%20image%2020220829215359.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220829215359.png)
 
 ### 全局控制
 
-![](../../../markdown_img/Pasted%20image%2020220829215431.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220829215431.png)
 
 ### 其他
 
-![](../../../markdown_img/Pasted%20image%2020220829215449.png)
+![](http://www.droliz.cn/markdown_img/Pasted%20image%2020220829215449.png)

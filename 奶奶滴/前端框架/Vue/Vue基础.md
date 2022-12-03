@@ -450,7 +450,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 	</script>
 </body>
 ```
-	
+
 列表数据变化时，会默认复用已存在的 DOM 元素，但会导致有状态的列表（被勾选的多选框）无法被正确更新。使用key维护列表的状态
 
 ```html
@@ -461,7 +461,7 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 			<button @click="addNewUser">添加</button>
 		</div>
 		<ul>
-			<li v-for="item in list" :key="item.id">
+			<li v-for="item in list">    <!-- :key="item.id" -->
 				<input type="checkbox" />
 				name：{{item.name}}, age：{{item.age}}
 			</li>
@@ -477,21 +477,23 @@ vue对这些方法进行了包装，这时调用的方法，不是array对象原
 				list: [{
 					name: '张三',
 					age: 18,
-					id: '1'
+					id: 1
 				},
 				{
 					name: '李四',
 					age: 20,
-					id: '2'
+					id: 2
 				}],
+				nextId: 3
 			},
 			methods: {
 				addNewUser() {
-					this.list.push({
+					this.list.unshift({
 						name: this.name,
 						age: 18,
-						id: this.nextId++
+						id: this.nextId
 					})
+					this.nextId++;
 				}
 			}
 		});

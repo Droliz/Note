@@ -2171,7 +2171,7 @@ Vuex 由三个组成
 **import 导入会执行一遍，所以会造成在use之前就创建了`store`实例（不允许），所以需要在`store.js`中use**
 
 ```js
-// 创建 vuex 中的 storeimport Vuex from "vuex"  
+// 创建 vuex 中的 store
 import Vuex from "vuex"
 import Vue from "vue"
 
@@ -2886,6 +2886,22 @@ new Vue({
 
 >指令中的所有 `this` 都是 `window` 不受 `vue` 管理
 
+***如果在指令中需要获取指向vc 的this，那么就需要使用第三个参数`vnode`，此参数提供`context`属性可以获取this***
+
+```js
+new Vue({  
+	el: "#app",  
+	data: {  
+		n: 1,  
+	},  
+	directives: {  
+		fore(el, binding, vnode) {
+			console.log(vnode.context)    // vc
+		}
+	}  
+}
+```
+
 **声明私有自定义指令**
 
 在组件的 `directives` 节点下声明私有自定义指令 `v-focus` ，在定义时不用加上 `v-` 使用时必须加上
@@ -2961,7 +2977,7 @@ app.directive('color', (el, binding) => {
 })
 ```
 
-#### 过度与动画
+#### 过渡与动画
 
 ```vue
 <template>  
