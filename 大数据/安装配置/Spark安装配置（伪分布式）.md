@@ -3,11 +3,11 @@
 
 上传
 
-![](../markdown_img/Pasted%20image%2020220927082520.png)
+![](../../markdown_img/Pasted%20image%2020220927082520.png)
 
 解压
 
-![](../markdown_img/Pasted%20image%2020220927082908.png)
+![](../../markdown_img/Pasted%20image%2020220927082908.png)
 
 ## 配置
 
@@ -37,22 +37,22 @@ export PATH=$PATH:$SPARK_HOME/bin
 ./start-all.sh
 ```
 
-![](../markdown_img/Pasted%20image%2020220927083813.png)
+![](../../markdown_img/Pasted%20image%2020220927083813.png)
 
 进入`master:8080`查看
 
-![](../markdown_img/Pasted%20image%2020220927083922.png)
+![](../../markdown_img/Pasted%20image%2020220927083922.png)
 
 
 ## 整合hive
 
 启动spark-shell导入hive包`import org.apache.spark.sql.hive.HiveContext`
 
-![](../markdown_img/Pasted%20image%2020221007172836.png)
+![](../../markdown_img/Pasted%20image%2020221007172836.png)
 
 将hive的lib目录下的mysql的驱动copy到spark的jars目录下
 
-![](../markdown_img/Pasted%20image%2020221007172958.png)
+![](../../markdown_img/Pasted%20image%2020221007172958.png)
 
 将
 

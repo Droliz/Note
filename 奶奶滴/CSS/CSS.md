@@ -70,7 +70,7 @@ CSS写在 ***style属性*** 中，配合js使用
 
 ### 类选择器
 
-结构：`类名{CSS属性名:属性值;}`
+结构：`类名{CSS属性名:属性值;}` 
 
 作用：通过类名，更改所有包含这个类名属性的标签
 
@@ -95,7 +95,7 @@ CSS写在 ***style属性*** 中，配合js使用
 /* 使用类 */
 <p class="one">文本文档</p>
 <p class="one tow">文本文档</p>
-    ```
+```
 
 ### id选择器
 结构：`#id属性值{CSS属性名:属性值;}`
@@ -403,7 +403,7 @@ font(复合属性)
 
 ```html
 <style>
-	a{
+	a {
 		text-decoration: none
 	}
 </style>
@@ -1096,7 +1096,7 @@ background-image: radial-gradient(farthest-side at 60% 55%, red, yellow, black);
         }  
   
         .box4 {  
-            position: sticky;  
+			position: sticky;  
             top: 300px;    /* 当box4top达到300px时就会固定住 */
   
             width: 200px;  

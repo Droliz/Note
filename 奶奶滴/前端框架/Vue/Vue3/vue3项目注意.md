@@ -1,3 +1,5 @@
+# vue3项目注意
+
 ## 在setup中获取之间实例对象
 
 使用全局api`getCurrentInstance`可以获取到组件的实例对象（只能在生命周期钩子中使用）
@@ -13,7 +15,7 @@ const {proxy} = getCurrentInstance()  // proxy 对象，除此之外还有ctx，
 ```js
 const instance = getCurrentInstance()
 const _this = instance.appContext.config.globalProperties
-	```
+```
 
 
 ## 在setup中的await

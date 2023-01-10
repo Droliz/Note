@@ -604,3 +604,102 @@ div {
 }
 ```
 
+
+## 溢出省略号
+
+### 单行溢出
+
+```css
+span {
+	overflow: hidden;  /* 溢出隐藏 */
+	text-overflow: ellipsis;  /* 省略号 */
+	white-space: nowrap;  /* 不换行 */
+}
+```
+
+### 多行溢出
+
+需要借助``
+
+```css
+span {  
+  line-height: 1.5em;  /* 行高 */
+  overflow: hidden;   /* 溢出隐藏 */
+  text-overflow: ellipsis;   /* 省略号，适配单行 */
+  /* 多行溢出省略号 */  
+  display: -webkit-box;   /* 弹性伸缩盒子 */
+  -webkit-box-orient: vertical;   /* 盒子的子元素排列方式 */
+  -webkit-line-clamp: 2;   /* 显示的行数 */
+}
+```
+
+## flex布局项目超出宽度
+
+```css
+.box {
+  width: 800px;
+  height: 400px;
+  display: flex;
+  border: 1px solid red;
+}
+.children{
+	flex-grow: 1;
+	background-color: rgb(119, 80, 80);
+	position: relative;
+	opacity: .3;
+}
+.left{
+  width: 200px;
+  flex-shrink: 0;
+  background: pink;
+}
+
+<div class="box">
+	<div class="left">
+		left
+	</div>
+	<div class="children">
+		children
+	</div>
+</div>
+```
+
+首先是一个很简单的flex布局
+
+![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2b86a6bce1824d9ba74820ac66e232c9~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+
+这里children 占据了容器元素剩余的位置，并且没有超出父元素
+
+改造一下：
+
+```css
+    <div class="box">
+        <div class="left">
+            left
+        </div>
+        <div class="children">
+            children
++           <div style="width:10000px;height:20px;background-color: pink;">
++           </div>
+        </div>
+    </div>
+复制代码
+```
+
+![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f62a39e93e5e4305bf7e9f41cec2b409~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+
+这里可以看到 children元素 超出了 容器元素，很奇怪，解决方式：
+
+```css
+.children{
+	flex-grow: 1;
+	background-color: rgb(119, 80, 80);
+	position: relative;
+	opacity: .3;
++   min-width: 1px;
+}
+```
+
+![](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7fae05fa07ce48528f4aa2bc286c4383~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
+
+children 元素遵循了包裹性的原则 没有超出容器元素大的小，**这里的解决方案就是给项目元素加一个 min-width:1px;**

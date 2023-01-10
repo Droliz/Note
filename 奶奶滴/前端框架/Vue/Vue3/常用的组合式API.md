@@ -43,7 +43,7 @@ export default {
     <p>number: {{ number }}</p>  
     <button @click="func"></button>  
   </div>  
-</template>
+<template>
 ```
 
 返回渲染函数`h()`，模板中的内容会按照渲染函数的结果为主（模板内容不会显示）

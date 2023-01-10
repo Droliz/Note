@@ -82,7 +82,7 @@ public void create(RestHighLevelClient client,String index) throws IOException {
 
 在kibana中查看
 
-![](../markdown_img/Pasted%20image%2020221111164237.png)
+![](../../markdown_img/Pasted%20image%2020221111164237.png)
 
 **删除索引**
 
@@ -104,13 +104,13 @@ public void delete(RestHighLevelClient client, String index) throws IOException 
 
 此时在控制台查看
 
-![](../markdown_img/Pasted%20image%2020221111164442.png)
+![](../../markdown_img/Pasted%20image%2020221111164442.png)
 
 **更新索引**
 
 更新前
 
-![](../markdown_img/Pasted%20image%2020221111165206.png)
+![](../../markdown_img/Pasted%20image%2020221111165206.png)
 
 ```java
 public void update(RestHighLevelClient client, String index) throws IOException {  
@@ -136,7 +136,7 @@ public void update(RestHighLevelClient client, String index) throws IOException 
 
 更新后
 
-![](../markdown_img/Pasted%20image%2020221111170113.png)
+![](../../markdown_img/Pasted%20image%2020221111170113.png)
 
 **获取Mappings**
 
@@ -150,7 +150,7 @@ public void getMappings(RestHighLevelClient client, String index) throws IOExcep
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221111170721.png)
+![](../../markdown_img/Pasted%20image%2020221111170721.png)
 
 
 ### 文档操作
@@ -213,7 +213,7 @@ for (int i = 0; i < data.size(); i++){
 
 在控制台查看
 
-![](../markdown_img/Pasted%20image%2020221112001002.png)
+![](../../markdown_img/Pasted%20image%2020221112001002.png)
 
 **修改文档**
 
@@ -245,7 +245,7 @@ doc.update(esClient, "index001", "5", newSource);
 
 在控制台查看结果
 
-![](../markdown_img/Pasted%20image%2020221112002329.png)
+![](../../markdown_img/Pasted%20image%2020221112002329.png)
 
 **删除文档**
 
@@ -262,7 +262,7 @@ public void delete(RestHighLevelClient client, String index, String id) throws I
 
 在控制台查看
 
-![](../markdown_img/Pasted%20image%2020221112002750.png)
+![](../../markdown_img/Pasted%20image%2020221112002750.png)
 
 
 **搜索**
@@ -294,8 +294,8 @@ doc.search(esClient, "index001", "name", "李");
 结果
 
 
-![](../markdown_img/Pasted%20image%2020221112005457.png)
+![](../../markdown_img/Pasted%20image%2020221112005457.png)
 
 控制台中搜索
 
-![](../markdown_img/Pasted%20image%2020221112005841.png)
+![](../../markdown_img/Pasted%20image%2020221112005841.png)

@@ -10,17 +10,17 @@ su es
 master:9200
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161523.png)
+![](../../markdown_img/Pasted%20image%2020221109161523.png)
 
 ```
 master:5601
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161533.png)
+![](../../markdown_img/Pasted%20image%2020221109161533.png)
 ## 准备数据
 
 创建索引
-![](../markdown_img/Pasted%20image%2020221109161543.png)
+![](../../markdown_img/Pasted%20image%2020221109161543.png)
 向索引添加数据
 
 ```
@@ -144,7 +144,7 @@ POST /customer/_doc/12
 "addr":"云龙区铁路宿舍1010号"
 }
 ```
-![](../markdown_img/Pasted%20image%2020221109161555.png)
+![](../../markdown_img/Pasted%20image%2020221109161555.png)
 创建索引并添加数据
 
 ```
@@ -157,7 +157,7 @@ PUT /index002/_doc/1
 "name":"lisi"
 }
 ```
-![](../markdown_img/Pasted%20image%2020221109161610.png)
+![](../../markdown_img/Pasted%20image%2020221109161610.png)
 ## 聚集查询
 
 ### Value Count
@@ -178,7 +178,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161621.png)
+![](../../markdown_img/Pasted%20image%2020221109161621.png)
 ### Cardinality
 
 基数聚合，也是用于统计文档的总数，跟Value Count的区别是，基数聚合会去重，不会统计重复的值，类似SQL的count(DISTINCT 字段)用法。
@@ -199,7 +199,7 @@ GET /customer/_search
 
 提示：是ES的cardinality基数聚合统计的总数是一个近似值，会有一定的误差，这么做的目的是为了性能，因为在海量的数据中精确统计总数是非常消耗性能的。
 
-![](../markdown_img/Pasted%20image%2020221109161629.png)
+![](../../markdown_img/Pasted%20image%2020221109161629.png)
 ### 3.Avg
 求平均值。
 示例：求顾客年龄的平均值：
@@ -217,7 +217,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161641.png)
+![](../../markdown_img/Pasted%20image%2020221109161641.png)
 
 ## Sum
 
@@ -237,7 +237,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161658.png)
+![](../../markdown_img/Pasted%20image%2020221109161658.png)
 
 ### Max
 求最大值。
@@ -255,7 +255,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161713.png)
+![](../../markdown_img/Pasted%20image%2020221109161713.png)
 ### Min
 求最小值。
 ```
@@ -271,7 +271,7 @@ GET /customer/_search
 }
 }
 ```
-![](../markdown_img/Pasted%20image%2020221109161725.png)
+![](../../markdown_img/Pasted%20image%2020221109161725.png)
 ### Status
 status -统计聚集，包括min\max\sum\count\avg五项内容。
 
@@ -288,7 +288,7 @@ GET /customer/_search
 }
 }
 ```
-![](../markdown_img/Pasted%20image%2020221109161731.png)
+![](../../markdown_img/Pasted%20image%2020221109161731.png)
 等价SQL：
 select count(age),min(age),max(age),avg(age),sum(age) from customer
 
@@ -315,7 +315,7 @@ GET /customer/_search
 }
 }
 ```
-![](../markdown_img/Pasted%20image%2020221109161747.png)
+![](../../markdown_img/Pasted%20image%2020221109161747.png)
 ### Terms聚合
 terms聚合的作用跟SQL中group by作用一样，都是根据字段唯一值对数据进行分组（分桶），字段值相等的文档都分到同一个桶内。
 ```
@@ -332,7 +332,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161759.png)
+![](../../markdown_img/Pasted%20image%2020221109161759.png)
 ### Histogram聚合
 histogram（直方图）聚合，主要根据数值间隔分组，使用histogram聚合分桶统计结果，通常用在绘制条形图报表。
 ```
@@ -350,7 +350,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161811.png)
+![](../../markdown_img/Pasted%20image%2020221109161811.png)
 interval：分桶的间隔值，这里以10为间隔进行分组。
 
 ### Date histogram聚合
@@ -370,7 +370,7 @@ GET /customer/_search?size=0
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161820.png)
+![](../../markdown_img/Pasted%20image%2020221109161820.png)
 
 calendar_interval分组间隔：month代表每月、支持minute（每分钟）、hour（每小时）、day（每天）、week（每周）、year（每年）；
 format: 设置返回结果中桶key的时间格式。
@@ -396,7 +396,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161828.png)
+![](../../markdown_img/Pasted%20image%2020221109161828.png)
 
 "to" : 25 : 意思就是 age <= 25的文档归类到一个桶；
 "from" : 20, "to" : 30: 20<price<30的文档归类到一个桶；
@@ -423,7 +423,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161841.png)
+![](../../markdown_img/Pasted%20image%2020221109161841.png)
 
 ### Date_range聚合
 date_range聚合，按日期范围分桶。
@@ -452,7 +452,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161851.png)
+![](../../markdown_img/Pasted%20image%2020221109161851.png)
 
 ### 综合案例
 配合query语句，先搜索目标文档，然后使用aggs聚合语句对搜索结果进行统计分析。
@@ -479,7 +479,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161900.png)
+![](../../markdown_img/Pasted%20image%2020221109161900.png)
 
 ### ES桶聚合支持两种方式排序：
 
@@ -506,7 +506,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161920.png)
+![](../../markdown_img/Pasted%20image%2020221109161920.png)
 
 示例2：
 ```
@@ -527,7 +527,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161937.png)
+![](../../markdown_img/Pasted%20image%2020221109161937.png)
 按度量指标排序
 通常情况下，我们根据桶聚合分桶后，都会对桶内进行多个维度的指标聚合，所以我们也可以根据桶内指标聚合的结果进行排序。
 ```
@@ -552,7 +552,7 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161945.png)
+![](../../markdown_img/Pasted%20image%2020221109161945.png)
 
 如果分桶的数量太多，可以通过给桶聚合增加一个size参数限制返回桶的数量。
 ```
@@ -570,4 +570,4 @@ GET /customer/_search
 }
 ```
 
-![](../markdown_img/Pasted%20image%2020221109161955.png)
+![](../../markdown_img/Pasted%20image%2020221109161955.png)

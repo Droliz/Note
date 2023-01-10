@@ -244,4 +244,4 @@ Map首先将输出写到环形缓存当中，开始spill过程：
 【按key分组】构造一个key对应的value迭代器。同一分区中满足同组条件（可以是不同的key）的进入同一个Interator，执行一次reduce方法；
 
 
-![](../markdown_img/Pasted%20image%2020220909151548.png)
+![](../../markdown_img/Pasted%20image%2020220909151548.png)
