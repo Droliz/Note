@@ -126,7 +126,7 @@ ES6 加强了对 Unicode 的支持，允许采用`\uxxxx`形式表示一个字�
 
 ```javascript
 "\uD842\uDFB7"
-// "𠮷"
+// "吉"
 
 "\u20BB7"
 // " 7"
@@ -136,7 +136,7 @@ ES6 对这一点做出了改进，只要将码点放入大括号，就能正确�
 
 ```javascript
 "\u{20BB7}"
-// "𠮷"
+// "吉"
 
 "\u{41}\u{42}\u{43}"
 // "ABC"
@@ -166,7 +166,7 @@ for (let i = 0; i < text.length; i++) {
 for (let i of text) {
   console.log(i);
 }
-// "𠮷"
+// "吉"
 ```
 
 #### 模板字符串
@@ -265,7 +265,7 @@ ES6 提供了`String.fromCodePoint()`方法，可以识别大于`0xFFFF`的字�
 
 ```javascript
 String.fromCodePoint(0x20BB7)
-// "𠮷"
+// "吉"
 ```
 
 ##### String.raw()
@@ -291,12 +291,12 @@ String.raw`Hi\\n` === "Hi\\\\n" // true
 
 ##### 实例方法：codePointAt()
 
-汉字“𠮷”（注意，这个字不是“吉祥”的“吉”）的码点是`0x20BB7`，UTF-16 编码为`0xD842 0xDFB7`（十进制为`55362 57271`），需要`4`个字节储存。对于这种`4`个字节的字符，JavaScript 不能正确处理，字符串长度会误判为`2`，而且`charAt()`方法无法读取整个字符，`charCodeAt()`方法只能分别返回前两个字节和后两个字节的值。
+汉字“吉”（注意，这个字不是“吉祥”的“吉”）的码点是`0x20BB7`，UTF-16 编码为`0xD842 0xDFB7`（十进制为`55362 57271`），需要`4`个字节储存。对于这种`4`个字节的字符，JavaScript 不能正确处理，字符串长度会误判为`2`，而且`charAt()`方法无法读取整个字符，`charCodeAt()`方法只能分别返回前两个字节和后两个字节的值。
 
 ES6 提供了`codePointAt()`方法，能够正确处理 4 个字节储存的字符，返回一个字符的码点。
 
 ```javascript
-let s = '𠮷a';
+let s = '吉a';
 
 s.codePointAt(0) // 134071
 s.codePointAt(1) // 57271
@@ -515,7 +515,7 @@ ES6 对正则表达式添加了`u`修饰符，含义为“Unicode 模式”，�
 点（`.`）字符在正则表达式中，含义是除了换行符以外的任意单个字符。对于码点大于`0xFFFF`的 Unicode 字符，点字符不能识别，必须加上`u`修饰符。
 
 ```javascript
-var s = '𠮷';
+var s = '吉';
 
 /^.$/.test(s) // false
 /^.$/u.test(s) // true
@@ -530,7 +530,7 @@ ES6 新增了使用大括号表示 Unicode 字符，这种表示法在正则表�
 ```javascript
 /\u{61}/.test('a') // false
 /\u{61}/u.test('a') // true
-/\u{20BB7}/u.test('𠮷') // true
+/\u{20BB7}/u.test('吉') // true
 ```
 
 上面代码表示，如果不加`u`修饰符，正则表达式无法识别`\u{61}`这种表示法，只会认为这匹配 61 个连续的`u`
@@ -542,8 +542,8 @@ ES6 新增了使用大括号表示 Unicode 字符，这种表示法在正则表�
 ```javascript
 /a{2}/.test('aa') // true
 /a{2}/u.test('aa') // true
-/𠮷{2}/.test('𠮷𠮷') // false
-/𠮷{2}/u.test('𠮷𠮷') // true
+/吉{2}/.test('吉吉') // false
+/吉{2}/u.test('吉吉') // true
 ```
 
 **（4）预定义模式**
@@ -551,8 +551,8 @@ ES6 新增了使用大括号表示 Unicode 字符，这种表示法在正则表�
 `u`修饰符也影响到预定义模式，能否正确识别码点大于`0xFFFF`的 Unicode 字符。
 
 ```javascript
-/^\S$/.test('𠮷') // false
-/^\S$/u.test('𠮷') // true
+/^\S$/.test('吉') // false
+/^\S$/u.test('吉') // true
 ```
 
 上面代码的`\S`是预定义模式，匹配所有非空白字符。只有加了`u`修饰符，它才能正确匹配码点大于`0xFFFF`的 Unicode 字符。
@@ -565,7 +565,7 @@ function codePointLength(text) {
   return result ? result.length : 0;
 }
 
-var s = '𠮷𠮷';
+var s = '吉吉';
 
 s.length // 4
 codePointLength(s) // 2
@@ -587,8 +587,8 @@ codePointLength(s) // 2
 没有`u`修饰符的情况下，正则中没有定义的转义（如逗号的转义`\,`）无效，而在`u`模式会报错。
 
 ```javascript
-/\,/ // /\,/
-/\,/u // 报错
+/\,/   // /\,/
+/\,/u   // 报错
 ```
 
 上面代码中，没有`u`修饰符时，逗号前面的反斜杠是无效的，加了`u`修饰符就报错

@@ -367,7 +367,7 @@ setTimeout(() => {
 * async/await
 
 ### 项目结构
-~~~
+```
 │  app.js  // 
 │  package-lock.json
 │  package.json
@@ -394,7 +394,8 @@ setTimeout(() => {
     │
     └─router  // 路由
             user.js  // user路由
-~~~
+```
+
 
 ### 业务模块
 
