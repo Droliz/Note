@@ -1,6 +1,6 @@
 # vue3项目注意
 
-## 在setup中获取之间实例对象
+## 在setup中获取之前实例对象
 
 使用全局api`getCurrentInstance`可以获取到组件的实例对象（只能在生命周期钩子中使用）
 

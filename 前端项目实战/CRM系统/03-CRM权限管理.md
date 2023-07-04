@@ -359,7 +359,56 @@ public ResultInfo updateUser(User user) {
 }
 ```
 
-## 用户角色关联
+### 删除用户信息
+
+`userService`
+
+```java
+/**  
+ * 用户删除  
+ * @param ids  
+ * @return void  
+ */
+@Transactional(propagation = Propagation.REQUIRED)  
+public void deleteByIds(Integer[] ids) {  
+    // 判断ids是否为空，长度是否大于0  
+    AssertUtil.isTrue(ids == null || ids.length == 0, "待删除记录不存在！");  
+    // 执行删除操作，判断受影响的行数  
+    AssertUtil.isTrue(userMapper.deleteBatch(ids) != ids.length, "用户删除失败！");  
+  
+    // 遍历用户ID的数组  
+    for (Integer userId : ids) {  
+        // 通过用户ID查询对应的用户角色记录  
+        Integer count  = userRoleMapper.countUserRoleByUserId(userId);  
+        // 判断用户角色记录是否存在  
+        if (count > 0) {  
+           //  通过用户ID删除对应的用户角色记录  
+            AssertUtil.isTrue(userRoleMapper.deleteUserRoleByUserId(userId) != count, "删除用户失败！");  
+        }  
+    }  
+}
+```
+
+`userController`
+
+```java
+/**  
+ * 用户删除  
+ *  
+ * @param ids  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@DeleteMapping("delete")  
+@ResponseBody  
+public ResultInfo deleteUser(Integer[] ids) {  
+  
+    userService.deleteByIds(ids);  
+  
+    return success("用户删除成功！");  
+}
+```
+
+### 用户角色关联
 
 在对用户进行操作同时更改对应的数据
 
@@ -507,3 +556,865 @@ relationUserRole(user.getId(), user.getRoleIds());
 ### 角色查询
 
 对所有的角色进行查询
+
+`sql`
+
+```xml
+<!-- 多条件查询 -->  
+<select id="selectByParams" parameterType="com.xxxx.crm.query.RoleQuery" resultType="com.xxxx.crm.vo.Role">  
+	select      
+		<include refid="Base_Column_List"></include>  
+	from      
+		t_role  
+	<where>  
+		is_valid = 1    
+		<if test="null != roleName and '' != roleName">  
+			and role_name like concat('%',#{roleName},'%')    
+		</if>  
+	</where>  
+</select>
+```
+
+
+`roleController`
+
+```java
+/**  
+ * 分页条件查询角色列表  
+ *  
+ * @param roleQuery  
+ * @return java.util.Map<java.lang.String,java.lang.Object>  
+ */  
+@GetMapping("list")  
+@ResponseBody  
+public Map<String,Object> selectByParams(RoleQuery roleQuery) {  
+    return roleService.queryByParamsForTable(roleQuery);  
+}
+```
+
+### 添加角色
+
+`sql`
+
+```xml
+<!-- 通过角色名查询角色记录 -->  
+<select id="selectByRoleName" parameterType="string" resultType="com.xxxx.crm.vo.Role">  
+	select      
+		<include refid="Base_Column_List"></include>  
+	from      
+		t_role  
+	where      
+		is_valid = 1  
+	and      
+		role_name = #{roleName}
+</select>
+```
+
+`roleMapper`
+
+```java
+// 通过角色名查询角色记录  
+Role selectByRoleName(String roleName);
+```
+
+`roleService`
+
+1. 参数校验  
+	角色名称        非空，名称唯一  
+2. 设置参数的默认值  
+	是否有效  
+	创建时间  
+	修改时间  
+3. 执行添加操作，判断受影响的行数  
+
+```java
+/**  
+ * 添加角色  
+ *  
+ * @param role  
+ * @return void  
+ */
+@Transactional(propagation = Propagation.REQUIRED)  
+public void addRole(Role role) {  
+    /* 1. 参数校验 */    
+    AssertUtil.isTrue(StringUtils.isBlank(role.getRoleName()), "角色名称不能为空！");  
+    // 通过角色名称查询角色记录  
+    Role temp = roleMapper.selectByRoleName(role.getRoleName());  
+    // 判断角色记录是否存在（添加操作时，如果角色记录存在则表示名称不可用）  
+    AssertUtil.isTrue(temp != null, "角色名称已存在，请重新输入！");  
+  
+    /* 2. 设置参数的默认值  */    
+    // 是否有效  
+    role.setIsValid(1);  
+    // 创建时间  
+    role.setCreateDate(new Date());  
+    // 修改时间  
+    role.setUpdateDate(new Date());  
+  
+	/* 3. 执行添加操作，判断受影响的行数 */
+	AssertUtil.isTrue(roleMapper.insertSelective(role) < 1, "角色添加失败！");  
+}
+```
+
+`roleControler`
+
+```java
+/**  
+ * 添加角色  
+ *  
+ * @param role  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@PostMapping("add")  
+@ResponseBody  
+public ResultInfo addRole(Role role) {  
+    roleService.addRole(role);  
+    return success("角色添加成功！");  
+}
+```
+
+### 更新角色
+
+`roleService`
+
+1. 参数校验  
+	角色ID    非空，且数据存在  
+	角色名称   非空，名称唯一  
+2. 设置参数的默认值  
+	修改时间  
+3. 执行更新操作，判断受影响的行数
+
+```java
+/**  
+ * 修改角色  
+ * 
+ * @param role  
+ * @return void  
+ */
+@Transactional(propagation = Propagation.REQUIRED)  
+public void updateRole(Role role) {  
+    /* 1. 参数校验 */    
+    // 角色ID    非空，且数据存在  
+    AssertUtil.isTrue(null == role.getId(), "待更新记录不存在！");  
+    // 通过角色ID查询角色记录  
+    Role temp = roleMapper.selectByPrimaryKey(role.getId());  
+    // 判断角色记录是否存在  
+    AssertUtil.isTrue(null == temp, "待更新记录不存在");  
+  
+    // 角色名称   非空，名称唯一  
+    AssertUtil.isTrue(StringUtils.isBlank(role.getRoleName()), "角色名称不能为空！");  
+    // 通过角色名称查询角色记录  
+    temp = roleMapper.selectByRoleName(role.getRoleName());  
+    // 判断角色记录是否存在（如果不存在，表示可使用；如果存在，且角色ID与当前更新的角色ID不一致，表示角色名称不可用）  
+    AssertUtil.isTrue(null != temp && (!temp.getId().equals(role.getId())), "角色名称已存在，不可使用！");  
+  
+    /* 2. 设置参数的默认值 */    
+    role.setUpdateDate(new Date());  
+  
+    /* 3. 执行更新操作，判断受影响的行数 */
+    AssertUtil.isTrue(roleMapper.updateByPrimaryKeySelective(role) < 1, "修改角色失败！");  
+}
+```
+
+`roleController`
+
+```java
+/**  
+ * 修改角色  
+ *  
+ * @param role  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@PostMapping("update")  
+@ResponseBody  
+public ResultInfo updateRole(Role role) {  
+    roleService.updateRole(role);  
+    return success("角色修改成功！");  
+}
+```
+
+### 删除角色
+
+`service`层
+
+`roleService`
+
+ 1. 参数校验  
+     角色ID    非空，数据存在  
+ 2. 设置相关参数的默认  
+     是否有效    0（删除记录）  
+     修改时间    系统默认时间  
+ 3. 执行更新操作，判断受影响的行数  
+
+```java
+ /** 删除角色  
+ *  
+ * @param roleId  
+ * @return void  
+ */
+@Transactional(propagation = Propagation.REQUIRED)  
+public void deleteRole(Integer roleId) {  
+    // 判断角色ID是否为空  
+    AssertUtil.isTrue(null == roleId, "待删除记录不存在！");  
+    // 通过角色ID查询角色记录  
+    Role role = roleMapper.selectByPrimaryKey(roleId);  
+    // 判断角色记录是否存在  
+    AssertUtil.isTrue(null == role, "待删除记录不存在！");  
+  
+    if (role.getIsValid() == 0) {  
+        AssertUtil.isTrue(true, "该角色已经删除，不需要重复删除！");  
+    } else {  
+        // 设置删除状态  
+        role.setIsValid(0);  
+        role.setUpdateDate(new Date());  
+  
+        // 执行更新操作  
+        AssertUtil.isTrue(roleMapper.updateByPrimaryKeySelective(role) < 1, "角色删除失败！");  
+    }  
+}
+```
+
+`roleController`
+
+```java
+/**  
+ * 删除角色  
+ *  
+ * @param roleId  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@PostMapping("delete")  
+@ResponseBody  
+public ResultInfo deleteRole(Integer roleId) {  
+    roleService.deleteRole(roleId);  
+    return success("角色删除成功！");  
+}
+```
+
+### 角色资源授权
+
+`service`层
+
+`roleService`
+
+将对应的角色ID与资源ID，添加到对应的权限表中 
+
+直接添加权限：不合适，会出现重复的权限数据（执行修改权限操作后删除权限操作时）  
+
+推荐使用：先将已有的权限记录删除，再将需要设置的权限记录添加  
+
+1. 通过角色ID查询对应的权限记录  
+2. 如果权限记录存在，则删除对应的角色拥有的权限记录  
+3. 如果有权限记录，则添加权限记录 (批量添加) 
+
+```java
+/**  
+ * 角色授权  
+ *   
+ * @param roleId  
+ * @param mIds  
+ * @return void  
+ */
+@Transactional(propagation = Propagation.REQUIRED)  
+public void addGrant(Integer roleId, Integer[] mIds) {
+	// 检验参数  
+	AssertUtil.isTrue(null == roleId, "待授权记录不存在！");  
+	AssertUtil.isTrue(null == mIds, "待授权资源不存在！");
+
+    // 1. 通过角色ID查询对应的权限记录  
+    Integer count = permissionMapper.countPermissionByRoleId(roleId);  
+    // 2. 如果权限记录存在，则删除对应的角色拥有的权限记录  
+    if (count > 0) {  
+        // 删除权限记录  
+        permissionMapper.deletePermissionByRoleId(roleId);  
+    }  
+    // 3. 如果有权限记录，则添加权限记录  
+    if (mIds != null &&  mIds.length > 0) {  
+        // 定义Permission集合  
+        List<Permission> permissionList = new ArrayList<>();  
+  
+        // 遍历资源ID数组  
+        for(Integer mId: mIds) {  
+            Permission permission = new Permission();  
+            permission.setModuleId(mId);  
+            permission.setRoleId(roleId);             
+            permission.setAclValue(
+		        moduleMapper.selectByPrimaryKey(mId).getOptValue());  
+            permission.setCreateDate(new Date());  
+            permission.setUpdateDate(new Date());  
+            // 将对象设置到集合中  
+            permissionList.add(permission);  
+        }  
+  
+        // 执行批量添加操作，判断受影响的行数  
+        AssertUtil.isTrue(
+	        permissionMapper.insertBatch(permissionList) != permissionList.size(),
+	        "角色授权失败！");  
+    }  
+}
+```
+
+`permissionMapper`
+
+```xml
+<!-- 通过角色ID查询权限记录 -->  
+<select id="countPermissionByRoleId" parameterType="int" resultType="java.lang.Integer">  
+  select      count(1)  from      t_permission  where      role_id = #{roleId}</select>  
+  
+<!-- 通过角色ID删除权限记录 -->  
+<delete id="deletePermissionByRoleId" parameterType="int">  
+  delete from      t_permission  where      role_id = #{roleId}</delete>  
+  
+<!-- 批量添加 -->  
+<insert id="insertBatch">  
+  insert  into      t_permission (role_id,module_id,acl_value,create_date,update_date)  values      <foreach collection="list" item="item" separator=",">  
+        (#{item.roleId},#{item.moduleId},#{item.aclValue},now(),now())      </foreach>  
+</insert>
+```
+
+```java
+// 通过角色ID查询权限记录  
+Integer countPermissionByRoleId(Integer roleId);
+
+// 通过角色ID删除权限记录  
+void deletePermissionByRoleId(Integer roleId);
+```
+
+`roleController`
+
+```java
+/**  
+ * 角色授权  
+ *  
+ * @param roleId  
+ * @param mIds  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@PostMapping("addGrant")  
+@ResponseBody  
+public ResultInfo addGrant(Integer roleId, Integer[] mIds) {  
+  
+    roleService.addGrant(roleId, mIds);  
+  
+    return success("角色授权成功！");  
+}
+```
+
+### 角色权限认证
+
+当完成角色权限添加功能后，下一 步就是对角色操作的资源进行认证操作，这里对于认证包含两块:
+
+1. 菜单级别显示控制
+2. 后端方法访问控制 
+
+**菜单级别访问控制实现**
+
+系统根据登录用户扮演的不同角色来对登录用户操作的菜单进行动态控制显示操作
+
+`indexController`
+
+```java
+// 通过当前登录用户ID查询当前登录用户拥有的资源列表 （查询对应资源的授权码）  
+List<String> permissions = permissionService.queryUserHasRoleHasPermissionByUserId(userId);
+```
+
+`PermissionService`
+
+```java
+/***  
+ * 通过查询用户拥有的角色，角色拥有的资源，得到用户拥有的资源列表 （资源权限码）  
+ *  
+ * @param userId  
+ * @return java.util.List<java.lang.String>  
+ */  
+public List<String> queryUserHasRoleHasPermissionByUserId(Integer userId) {  
+    return permissionMapper.queryUserHasRoleHasPermissionByUserId(userId);  
+}
+```
+
+`sql`
+
+```xml
+<!-- 通过用户ID查询对应的资源列表（资源权限码） -->  
+<select id="queryUserHasRoleHasPermissionByUserId" parameterType="int" resultType="java.lang.String">  
+	SELECT DISTINCT      
+		acl_value  
+	FROM      
+		t_user_role ur      
+	LEFT JOIN 
+		t_permission p ON ur.role_id = p.role_id  
+	WHERE      
+		ur.user_id = #{userId}
+</select>
+```
+
+**后端方法访问控制**
+
+在方法上添加**自定义注解**，在调用方法时，进行权限的验证
+
+例如：获取营销管理方法的授权
+
+```java
+/**  
+ * 删除营销机会 101003  
+ * * @param ids  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@RequiredPermission(code = "101003")  
+@DeleteMapping("delete")  
+@ResponseBody  
+public ResultInfo deleteSaleChance(Integer[] ids) {  
+    // 调用Service层的删除方法  
+    saleChanceService.deleteBatch(ids);  
+    return success("营销机会数据删除成功！");  
+}
+```
+
+在全局的异常处理中也是需要对切面中抛出的异常进行处理
+
+
+## 资源管理
+
+### 查询所有资源
+
+**直接查询所有的**
+
+`moduleController`
+
+```java
+/***  
+ * 查询资源列表  
+ *  
+ * @param  
+ * @return java.util.Map<java.lang.String,java.lang.Object>  
+ */  
+@RequestMapping("list")  
+@ResponseBody  
+public Map<String, Object>  queryModuleList() {  
+    return moduleService.queryModuleList();  
+}
+```
+
+`moduleService`
+
+```java
+/***  
+ * 查询资源数据  
+ *  
+ * @param  
+ * @return java.util.Map<java.lang.String,java.lang.Object>  
+ */  
+public Map<String,Object> queryModuleList() {  
+    Map<String, Object> map = new HashMap<>();  
+    // 查询资源列表  
+    List<Module> moduleList = moduleMapper.queryModuleList();  
+    map.put("code",0);  
+    map.put("msg","");  
+    map.put("count", moduleList.size());  
+    map.put("data",moduleList);  
+  
+    return map;  
+}
+```
+
+**查询当前用户拥有的资源列表**
+
+只返回生成树形结构所需要的字段（便于在角色管理中修改修改角色资源授权，树形结构）
+
+```json
+{
+	"id": 1,   
+	"pId": -1,
+	"name": "营销管理",
+	"checked": false
+}
+```
+
+`moduleService`
+
+```java
+/**  
+ * 查询所有的资源列表  
+ *  
+ * @param  
+ * @return java.util.List<com.xxxx.crm.model.TreeModel>  
+ */  
+public List<TreeModel> queryAllModules(Integer roleId) {  
+	AssertUtil.isTrue(null == roleId,"角色id不能为空！");
+
+    // 查询所有的资源列表  
+    List<TreeModel> treeModelList = moduleMapper.queryAllModules();  
+    // 查询指定角色已经授权过的资源列表 (查询角色拥有的资源ID)  
+    List<Integer> permissionIds = permissionMapper.queryRoleHasModuleIdsByRoleId(roleId);  
+    // 判断角色是否拥有资源ID  
+    if (permissionIds != null && permissionIds.size() > 0) {  
+        // 循环所有的资源列表，判断用户拥有的资源ID中是否有匹配的，如果有，则设置checked属性为true  
+        treeModelList.forEach(treeModel -> {  
+            // 判断角色拥有的资源ID中是否有当前遍历的资源ID  
+            if (permissionIds.contains(treeModel.getId())) {  
+                // 如果包含你，则说明角色授权过，设置checked为true  
+                treeModel.setChecked(true);  
+            }  
+        });  
+    }  
+    return treeModelList;  
+}
+```
+
+`moduleController`
+
+```java
+/**  
+ * 查询所有的资源列表  
+ *  
+ * @param  
+ * @return java.util.List<com.xxxx.crm.model.TreeModel>  
+ */  
+@RequestMapping("queryAllModules")  
+@ResponseBody  
+public List<TreeModel> queryAllModules(Integer roleId) {  
+    return moduleService.queryAllModules(roleId);  
+}
+```
+
+### 添加资源
+
+`moculeService`
+
+1. 参数校验  
+    模块名称 moduleName  
+        非空，同一层级下模块名称唯一  
+    地址 url  
+        二级菜单（grade=1），非空且同一层级下不可重复  
+    父级菜单 parentId  
+        一级菜单（目录 grade=0）    -1  
+        二级|三级菜单（菜单|按钮 grade=1或2）    非空，父级菜单必须存在  
+    层级 grade  
+        非空，0|1|2  
+    权限码 optValue  
+        非空，不可重复  
+2. 设置参数的默认值  
+    是否有效 isValid    1  
+    创建时间createDate  系统当前时间  
+    修改时间updateDate  系统当前时间  
+3. 执行添加操作，判断受影响的行数 
+
+```java
+/**  
+ * 添加资源   
+ * @param module  
+ * @return void  
+ */
+@Transactional(propagation = Propagation.REQUIRED)  
+public void addModule(Module module) {  
+    /* 1. 参数校验  */    
+    // 层级 grade 非空，0|1|2  
+    Integer grade = module.getGrade();  
+    AssertUtil.isTrue(null == grade || !(grade == 0 || grade == 1 || grade == 2),"菜单层级不合法！");  
+  
+    // 模块名称 moduleName  非空  
+    AssertUtil.isTrue(StringUtils.isBlank(module.getModuleName()), "模块名称不能为空！");  
+    // 模块名称 moduleName  同一层级下模块名称唯一  
+    AssertUtil.isTrue(
+	    null != moduleMapper.queryModuleByGradeAndModuleName(
+		    grade, 
+		    module.getModuleName()), 
+		"改层级下模块名称已存在！");  
+  
+    // 如果是二级菜单 （grade=1)  
+    if (grade == 1) {  
+        // 地址 url   二级菜单（grade=1），非空  
+        AssertUtil.isTrue(StringUtils.isBlank(module.getUrl()),"URL不能为空！");  
+        // 地址 url   二级菜单（grade=1），且同一层级下不可重复  
+        AssertUtil.isTrue(
+	        null != moduleMapper.queryModuleByGradeAndUrl(grade,module.getUrl()),
+	        "URL不可重复！");  
+    }  
+  
+    // 父级菜单 parentId    一级菜单（目录 grade=0）    -1    
+    if (grade == 0) {  
+        module.setParentId(-1);  
+    }  
+    // 父级菜单 parentId    二级|三级菜单（菜单|按钮 grade=1或2）    非空，父级菜单必须存在  
+    if (grade != 0) {  
+        // 非空  
+        AssertUtil.isTrue(null == module.getParentId(),"父级菜单不能为空！");  
+        // 父级菜单必须存在 (将父级菜单的ID作为主键，查询资源记录)  
+        AssertUtil.isTrue(
+	        null == moduleMapper.selectByPrimaryKey(module.getParentId()), 
+	        "请指定正确的父级菜单！");  
+    }  
+  
+    // 权限码 optValue     非空  
+    AssertUtil.isTrue(
+	    StringUtils.isBlank(module.getOptValue()),
+	    "权限码不能为空！");  
+    // 权限码 optValue     不可重复  
+    AssertUtil.isTrue(
+	    null != moduleMapper.queryModuleByOptValue(module.getOptValue()),
+	    "权限码已存在！");  
+  
+  
+    /* 2. 设置参数的默认值  */    
+    // 是否有效 isValid    1    
+    module.setIsValid((byte) 1);  
+    // 创建时间createDate  系统当前时间  
+    module.setCreateDate(new Date());  
+    // 修改时间updateDate  系统当前时间  
+    module.setUpdateDate(new Date());  
+  
+    /* 3. 执行添加操作，判断受影响的行数 */
+    AssertUtil.isTrue(moduleMapper.insertSelective(module) < 1, "添加资源失败！");  
+  
+}
+```
+
+`moduleMapper`
+
+```java
+// 通过层级与模块名查询资源对象  
+Module queryModuleByGradeAndModuleName(@Param("grade") Integer grade, @Param("moduleName") String moduleName);
+
+// 通过层级与URL查询资源对象  
+Module queryModuleByGradeAndUrl(@Param("grade")Integer grade, @Param("url")String url);
+
+/**  
+ * 根据id 查询详情 (BaseMapper中)  
+ *  
+ * @param id  
+ * @return  
+ */  
+T selectByPrimaryKey(ID id) throws DataAccessException;
+
+// 通过权限码查询资源对象  
+Module queryModuleByOptValue(String optValue);
+```
+
+```xml
+<!-- 通过层级与模块名查询资源对象 -->  
+<select id="queryModuleByGradeAndModuleName" resultType="com.xxxx.crm.vo.Module">  
+	select      
+		<include refid="Base_Column_List"></include>  
+	from      
+		t_module 
+	where      
+		is_valid = 1 
+	and 
+		grade = #{grade} 
+	and 
+		module_name = #{moduleName}
+</select>  
+
+<!-- 通过层级与URL查询资源对象 -->  
+<select id="queryModuleByGradeAndUrl" resultType="com.xxxx.crm.vo.Module">  
+	select      
+		<include refid="Base_Column_List"></include>  
+	from      
+		t_module  
+	where      
+		is_valid = 1 
+	and 
+		grade = #{grade} 
+	and 
+		url = #{url}
+</select>
+
+<!-- 通过权限码查询资源对象 -->  
+<select id="queryModuleByOptValue" resultType="com.xxxx.crm.vo.Module">  
+	select      
+		<include refid="Base_Column_List"></include>  
+	from      
+		t_module  
+	where      
+		is_valid = 1 
+	and 
+		opt_value = #{optValue}
+</select>
+
+<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >  
+	select
+		<include refid="Base_Column_List" />  
+	from 
+		t_module  
+	where 
+		id = #{id,jdbcType=INTEGER}
+</select>
+```
+
+`moduleController`
+
+```java
+/**  
+ * 添加资源  
+ *  
+ * @param module  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@PostMapping("add")  
+@ResponseBody  
+public ResultInfo addModule(Module module) {  
+  
+    moduleService.addModule(module);  
+    return success("添加资源成功！");  
+}
+```
+
+### 修改资源
+
+`moduleService`
+
+1. 参数校验  
+    id  
+        非空，数据存在  
+    层级 grade  
+        非空 0|1|2  
+    模块名称 moduleName  
+        非空，同一层级下模块名称唯一 （不包含当前修改记录本身）  
+    地址 url  
+        二级菜单（grade=1），非空且同一层级下不可重复（不包含当前修改记录本身）  
+    权限码 optValue  
+        非空，不可重复（不包含当前修改记录本身）  
+2. 设置参数的默认值  
+     修改时间updateDate  系统当前时间  
+3. 执行更新操作，判断受影响的行数  
+
+```java
+/**  
+ * 修改资源  
+ *  
+ * @param module  
+ * @return void  
+ */
+@Transactional(propagation = Propagation.REQUIRED)  
+public void updateModule(Module module) {  
+    /* 1. 参数校验 */    
+    // id 非空，数据存在  
+    // 非空判断  
+    AssertUtil.isTrue(null == module.getId(), "待更新记录不存在！");  
+    // 通过id查询资源对象  
+    Module temp = moduleMapper.selectByPrimaryKey(module.getId());  
+    // 判断记录是否存在  
+    AssertUtil.isTrue(null == temp, "待更新记录不存在！");  
+  
+    // 层级 grade  非空 0|1|2    Integer grade = module.getGrade();  
+    AssertUtil.isTrue(null == grade || !(grade == 0 || grade == 1 || grade == 2), "菜单层级不合法！");  
+  
+    // 模块名称 moduleName      非空，同一层级下模块名称唯一 （不包含当前修改记录本身）  
+    AssertUtil.isTrue(StringUtils.isBlank(module.getModuleName()), "模块名称不能为空！");  
+    // 通过层级与模块名称查询资源对象  
+    temp = moduleMapper.queryModuleByGradeAndModuleName(grade, module.getModuleName());  
+    if (temp != null) {  
+        AssertUtil.isTrue(!(temp.getId()).equals(module.getId()), "该层级下菜单名已存在！");  
+    }  
+  
+    // 地址 url   二级菜单（grade=1），非空且同一层级下不可重复（不包含当前修改记录本身）  
+    if (grade == 1) {  
+        AssertUtil.isTrue(StringUtils.isBlank(module.getUrl()), "菜单URL不能为空！");  
+        // 通过层级与菜单URl查询资源对象  
+        temp = moduleMapper.queryModuleByGradeAndUrl(grade, module.getUrl());  
+        // 判断是否存在  
+        if (temp != null) {  
+            AssertUtil.isTrue(!(temp.getId()).equals(module.getId()), "该层级下菜单URL已存在！");  
+        }  
+    }  
+  
+    // 权限码 optValue     非空，不可重复（不包含当前修改记录本身）  
+    AssertUtil.isTrue(StringUtils.isBlank(module.getOptValue()), "权限码不能为空！");  
+    // 通过权限码查询资源对象  
+    temp = moduleMapper.queryModuleByOptValue(module.getOptValue());  
+    // 判断是否为空  
+    if (temp != null) {  
+        AssertUtil.isTrue(!(temp.getId()).equals(module.getId()),"权限码已存在！");  
+    }  
+  
+    /* 2. 设置参数的默认值  */    // 修改时间 系统当前时间  
+    module.setUpdateDate(new Date());  
+  
+    /* 3. 执行更新操作，判断受影响的行数 */
+    AssertUtil.isTrue(moduleMapper.updateByPrimaryKeySelective(module) < 1, "修改资源失败！");  
+}
+```
+
+
+`moduleController`
+
+```java
+/**  
+ * 修改资源  
+ *  
+ * @param module  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@PostMapping("update")  
+@ResponseBody  
+public ResultInfo updateModule(Module module) {  
+  
+    moduleService.updateModule(module);  
+    return success("修改资源成功！");  
+}
+```
+
+### 删除资源
+
+`moduleService`
+
+1. 判断删除的记录是否存在  
+2. 如果当前资源存在子记录，则不可删除  
+3. 删除资源时，将对应的权限表的记录也删除（判断权限表中是否存在关联数据，如果存在，则删除）  
+4. 执行删除（更新）操作，判断受影响的行数  
+
+```java
+/**  
+ * 删除资源  
+ *  
+ * @param id  
+ * @return void  
+ */
+@Transactional(propagation = Propagation.REQUIRED)  
+public void deleteModule(Integer id) {  
+    // 判断id是否为空  
+    AssertUtil.isTrue(null == id, "待删除记录不存在！");  
+    // 通过id查询资源对象  
+    Module temp = moduleMapper.selectByPrimaryKey(id);  
+    // 判断资源对象是否为空  
+    AssertUtil.isTrue(null == temp, "待删除记录不存在！");  
+  
+    // 如果当前资源存在子记录(将id当做父Id查询资源记录)  
+    Integer count = moduleMapper.queryModuleByParentId(id);  
+    // 如果存在子记录，则不可删除  
+    AssertUtil.isTrue(count > 0, "该资源存在子记录，不可删除！");  
+  
+    // 通过资源id查询权限表中是否存在数据  
+    count = permissionMapper.countPermissionByModuleId(id);  
+    // 判断是否存在，存在则删除  
+    if (count > 0) {  
+        // 删除指定资源ID的权限记录  
+        permissionMapper.deletePermissionByModuleId(id);  
+    }  
+  
+    // 设置记录无效  
+    temp.setIsValid((byte) 0);  
+    temp.setUpdateDate(new Date());  
+  
+    // 执行更新  
+    AssertUtil.isTrue(moduleMapper.updateByPrimaryKeySelective(temp) < 1, "删除资源失败！");  
+}
+```
+
+`moduleController`
+
+```java
+/**  
+ * 删除资源  
+ * @param id  
+ * @return com.xxxx.crm.base.ResultInfo  
+ */
+@PostMapping("delete")  
+@ResponseBody  
+public ResultInfo deleteModule(Integer id) {  
+  
+    moduleService.deleteModule(id);  
+    return success("删除资源成功！");  
+}
+```
+
